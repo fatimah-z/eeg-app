@@ -4,8 +4,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
-
+const jwt = require('jsonwebtoken');
 const url = 'mongodb://127.0.0.1:27017/Neuroscan';
+const dotenv = require('dotenv');
+
+// get config vars
+dotenv.config();
+
 mongoose.connect(url , function (err, connect){
     if(err)
     throw err
