@@ -17,7 +17,7 @@ export const login = async (username, password) => {
       console.log("REsponse of login api:", res);
     })
     .catch((err) => console.log("Error of login api:", String(err)));
-  // save tokens to storage
+  // save tokens to storageexpo
   //   await setAuthTokens({
   //     accessToken: response.data.access_token,
   //     refreshToken: response.data.refresh_token,
