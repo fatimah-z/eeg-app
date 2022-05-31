@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, Stack } from "react-native";
 import { Dimensions } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+
 import {
   LineChart,
   BarChart,
@@ -11,8 +13,18 @@ import {
   StackedBarChart,
 } from "react-native-chart-kit";
 import Navigator from "./stack/appstack";
-import { login } from "./auth/auth";
+import { accessToken, login, refreshToken } from "./auth/auth";
 import "react-native-gesture-handler";
+import { isLoggedIn } from "react-native-axios-jwt";
+import SignupScreen from "./screens/signup";
+import LoginScreen from "./screens/login";
+import DataImportScreen from "./screens/dataimportoptions";
+import HeadsetScreen from "./screens/connectheadset";
+import ImportScreen from "./screens/importeegdata";
+import UploadScreen from "./screens/uploadeeg";
+import AnalyzeScreen from "./screens/analyze";
+import { NavigationContainer } from "@react-navigation/native";
+import AuthContext from "./auth/authContext";
 
 // const show = ()=>{
 //   console.log('button clicked');
@@ -31,9 +43,13 @@ export default function App() {
   const [secondarr, setsecondarr] = useState([]);
   const [loading, setisloading] = useState(true);
   const [arr, setarr] = useState([1, 2, 3]);
+  const Stack = createStackNavigator();
+  const [signedIn, setSignedIn] = useState(false);
 
   useEffect(() => {
-    login("aamna", "12345");
+    isLoggedIn().then((status) => {
+      setSignedIn(status);
+    });
   }, []);
   const show = async () => {
     // console.log('button clicked');
@@ -94,8 +110,28 @@ export default function App() {
   };
 
   return (
-    <Navigator />
+    <AuthContext.Provider value={{ signedIn, setSignedIn }}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {signedIn ? (
+            <>
+              <Stack.Screen name="DataImport" component={DataImportScreen} />
+              <Stack.Screen name="Headset" component={HeadsetScreen} />
+              <Stack.Screen name="Import" component={ImportScreen} />
+              <Stack.Screen name="Upload" component={UploadScreen} />
+              <Stack.Screen name="Analyze" component={AnalyzeScreen} />
+            </>
+          ) : (
+            <>
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Signup" component={SignupScreen} />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthContext.Provider>
 
+    // <Navigator />
     //   <View style={styles.container}>
     //     <Button
     //     title='show eeg signals'

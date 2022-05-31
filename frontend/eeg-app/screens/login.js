@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,14 +10,18 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
+import { getAccessToken } from "react-native-axios-jwt";
 import Background from "../assets/images/background.png";
 import { login } from "../auth/auth";
+import AuthContext from "../auth/authContext";
 export default function App({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const authContextValue = useContext(AuthContext);
+  const signedIn = authContextValue.signedIn;
+  const setSignedIn = authContextValue.setSignedIn;
   const onLogin = () => {
-    login(username, password);
-    // navigation.navigate('DataImport');
+    login(username, password, setSignedIn);
   };
 
   return (
@@ -53,6 +57,9 @@ export default function App({ navigation }) {
             />
           </View>
 
+          <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+            <Text style={styles.forgot_button}>SignUp</Text>
+          </TouchableOpacity>
           <TouchableOpacity>
             <Text style={styles.forgot_button}>Forgot Password?</Text>
           </TouchableOpacity>
