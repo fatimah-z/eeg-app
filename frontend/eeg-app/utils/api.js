@@ -1,7 +1,7 @@
 import { applyAuthTokenInterceptor } from "react-native-axios-jwt";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://192.168.151.235:3000";
 
 // 1. Create an axios instance that you wish to apply the interceptor to
 export const axiosInstance = axios.create({ baseURL: BASE_URL });

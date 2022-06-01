@@ -119,10 +119,11 @@ const Styles = StyleSheet.create({
    
   },
   txt: {
-    color: "#264CE3",
+    color: "#FFFFFF",
     fontSize: 17,
-    fontWeight: "bold",
+   
     textDecorationLine: "underline",
+    marginLeft:"3%"
   },
   statusContainer: {
     flexDirection: "row",

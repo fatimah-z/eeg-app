@@ -23,7 +23,10 @@ import HeadsetScreen from "./screens/connectheadset";
 import ImportScreen from "./screens/importeegdata";
 import UploadScreen from "./screens/uploadeeg";
 import AnalyzeScreen from "./screens/analyze";
+import ClassifyScreen from "./screens/classify";
 import { NavigationContainer } from "@react-navigation/native";
+import PatientHistory from "./screens/patienthistory";
+import ReportGeneration from "./screens/reportgeneration";
 import AuthContext from "./auth/authContext";
 
 // const show = ()=>{
@@ -44,7 +47,7 @@ export default function App() {
   const [loading, setisloading] = useState(true);
   const [arr, setarr] = useState([1, 2, 3]);
   const Stack = createStackNavigator();
-  const [signedIn, setSignedIn] = useState(false);
+  const [signedIn, setSignedIn] = useState(true);
 
   useEffect(() => {
     isLoggedIn().then((status) => {
@@ -112,22 +115,26 @@ export default function App() {
   return (
     <AuthContext.Provider value={{ signedIn, setSignedIn }}>
       <NavigationContainer>
-        <Stack.Navigator>
-          {signedIn ? (
-            <>
-              <Stack.Screen name="DataImport" component={DataImportScreen} />
-              <Stack.Screen name="Headset" component={HeadsetScreen} />
-              <Stack.Screen name="Import" component={ImportScreen} />
-              <Stack.Screen name="Upload" component={UploadScreen} />
-              <Stack.Screen name="Analyze" component={AnalyzeScreen} />
-            </>
-          ) : (
-            <>
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Signup" component={SignupScreen} />
-            </>
-          )}
-        </Stack.Navigator>
+        {signedIn ? (
+          <Stack.Navigator>
+            <Stack.Screen name="DataImport" component={DataImportScreen} />
+            <Stack.Screen name="Headset" component={HeadsetScreen} />
+            <Stack.Screen name="Import" component={ImportScreen} />
+            <Stack.Screen name="Upload" component={UploadScreen} />
+            <Stack.Screen name="Analyze" component={AnalyzeScreen} />
+            <Stack.Screen name="Classify" component={ClassifyScreen} />
+            <Stack.Screen name="PatientHistory" component={PatientHistory} />
+            <Stack.Screen
+              name="ReportGeneration"
+              component={ReportGeneration}
+            />
+          </Stack.Navigator>
+        ) : (
+          <Stack.Navigator>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+          </Stack.Navigator>
+        )}
       </NavigationContainer>
     </AuthContext.Provider>
 

@@ -35,7 +35,8 @@ router.post("/login", function (req, res, next) {
   User.findOne({ username: req.body.username, password: req.body.password })
     .sort("name")
     .exec(function (error, result) {
-      if (error) {
+      console.log(result);
+      if (error | !result) {
         return next(error);
       }
       // Respond with valid data

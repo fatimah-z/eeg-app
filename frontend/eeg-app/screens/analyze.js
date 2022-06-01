@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -21,24 +21,22 @@ import {
   PieChart,
   ProgressChart,
   ContributionGraph,
-  StackedBarChart
-} from 'react-native-chart-kit'
-import { Dimensions } from 'react-native';
+  StackedBarChart,
+} from "react-native-chart-kit";
+import { Dimensions } from "react-native";
 
 export default function App({ navigation }) {
-  const[data,setdata] = useState({});
-  const[firstarr,setfirstarr] = useState([]);
-  const [x,setx] = useState([]);
-  const [y,sety] = useState([]);
-  const[secondarr,setsecondarr] = useState([]);
-  const[loading,setisloading] = useState(true);
-  const[arr,setarr]= useState([1,2,3])
+  const [data, setdata] = useState({});
+  const [firstarr, setfirstarr] = useState([]);
+  const [x, setx] = useState([]);
+  const [y, sety] = useState([]);
+  const [secondarr, setsecondarr] = useState([]);
+  const [loading, setisloading] = useState(true);
+  const [arr, setarr] = useState([1, 2, 3]);
 
-  useEffect(()=>{
-    
-  },[]);
+  useEffect(() => {}, []);
   const onAnalyze = () => {
-    navigation.navigate("Analyze");
+    navigation.navigate("Classify");
   };
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
@@ -46,31 +44,27 @@ export default function App({ navigation }) {
     { label: "CSV", value: "csv" },
     { label: "TXT", value: "txt" },
   ]);
-  const view = async ()=>{
-    try{
-      const response = await fetch('http://192.168.100.171:3000/view',{method:'GET'});
-      const resp = await  response.json();
+  const view = async () => {
+    try {
+      const response = await fetch("http://192.168.100.171:3000/view", {
+        method: "GET",
+      });
+      const resp = await response.json();
       setdata(resp);
       setfirstarr(resp[0].arr1);
       console.log(firstarr);
       setsecondarr(resp[1].arr2);
-     
-      console.log(secondarr); 
-      // console.log(resp[0].arr1);
-      
-    }
-    catch(error){
 
-    }
-    finally{
-     
+      console.log(secondarr);
+      // console.log(resp[0].arr1);
+    } catch (error) {
+    } finally {
       setisloading(false);
-      
     }
   };
   return (
     <View style={Styles.container}>
-      {/* <ImageBackground
+      <ImageBackground
         source={Background}
         resizeMode="cover"
         style={Styles.image}
@@ -79,11 +73,9 @@ export default function App({ navigation }) {
           <Image style={Styles.eegdataimg} source={EEGData}></Image>
         </View>
 
-       
-
         <View style={Styles.innerContainer}>
           <View style={Styles.statusContainer}>
-            <Text style={Styles.txt}>Status:</Text>
+            <Text style={Styles.uploadtxt}>Status:</Text>
           </View>
           <View style={Styles.statusUploadContainer}>
             <Image source={Done} style={Styles.doneimg}></Image>
@@ -91,61 +83,59 @@ export default function App({ navigation }) {
           </View>
           <View style={Styles.analyzebtn}>
             <TouchableOpacity style={Styles.loginBtn} onPress={onAnalyze}>
-              <Text style={Styles.loginText}>Analyze EEG Data</Text>
+              <Text style={Styles.loginText}>Classify EEG Data</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </ImageBackground> */}
+      </ImageBackground>
 
-<Button
-      title='show eeg signals'
-      onPress={()=>view()}
-      />
+      {/* <Button title="show eeg signals" onPress={() => view()} />
 
-      { !loading && secondarr!=null && firstarr!=null && x!=null && y!=null? ( 
-   
-    <LineChart 
-    data={{
-      labels: firstarr.map(element=>
-        Math.round(element*100)/100
-      ),
-      datasets: [{
-        data: secondarr.map(element=>
-          element/Math.pow(10,-11)
-        )
-      }]
-    }}
-    width={Dimensions.get('window').width} // from react-native
-    height={500}
-    chartConfig={{
-      backgroundColor: '#F6DDCC',
-      backgroundGradientFrom: '#E74C3C  ',
-      backgroundGradientTo: '#EC7063',
-      //decimalPlaces: 1, // optional, defaults to 2dp
-      withDots:false,
-      strokeWidth:2,
-      withInnerLines:false,
-      withOuterLines:false,
-      xLabelsOffset: 10,
-      withVerticalLines:false,
-      withHorizontalLines: false,
-      horizontalLabelRotation:30,
-      verticalLabelRotation:30,
-      color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-      style: {
-        borderRadius: 16
-      }
-    }}
-    style={{
-      margin:20,
-      marginVertical: 8,
-      borderRadius: 16,
-      flex:1
-    }}
-  />
-
-
-      ):<Text>loading data....</Text>}
+      {!loading &&
+      secondarr != null &&
+      firstarr != null &&
+      x != null &&
+      y != null ? (
+        <LineChart
+          data={{
+            labels: firstarr.map((element) => Math.round(element * 100) / 100),
+            datasets: [
+              {
+                data: secondarr.map((element) => element / Math.pow(10, -11)),
+              },
+            ],
+          }}
+          width={Dimensions.get("window").width} // from react-native
+          height={500}
+          chartConfig={{
+            backgroundColor: "#F6DDCC",
+            backgroundGradientFrom: "#E74C3C  ",
+            backgroundGradientTo: "#EC7063",
+            //decimalPlaces: 1, // optional, defaults to 2dp
+            withDots: false,
+            strokeWidth: 2,
+            withInnerLines: false,
+            withOuterLines: false,
+            xLabelsOffset: 10,
+            withVerticalLines: false,
+            withHorizontalLines: false,
+            horizontalLabelRotation: 30,
+            verticalLabelRotation: 30,
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            style: {
+              borderRadius: 16,
+            },
+          }}
+          style={{
+            margin: 20,
+            marginVertical: 8,
+            borderRadius: 16,
+            flex: 1,
+          }}
+        />
+      ) : (
+        <Text>loading data....</Text>
+      )} */}
     </View>
   );
 }
@@ -184,16 +174,11 @@ const Styles = StyleSheet.create({
     alignItems: "center",
     marginTop: "72%",
   },
-  txt: {
-    color: "#264CE3",
-    fontSize: 17,
-    fontWeight: "bold",
-    textDecorationLine: "underline",
-  },
+  
   uploadtxt: {
-    color: "#264CE3",
+    color: "#FFFFFF",
     fontSize: 17,
-    fontWeight: "bold",
+
     textDecorationLine: "underline",
   },
   statusContainer: {
