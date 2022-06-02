@@ -1,4 +1,5 @@
 import os
+import os.path as op
 from turtle import mode
 import numpy as np
 import mne
@@ -12,17 +13,24 @@ CORS(app)
 
 @app.route('/view', methods=['GET'])
 def getEEG():
-    sample_data_folder = mne.datasets.sample.data_path()
-    sample_data_raw_file = os.path.join(sample_data_folder, 'MEG', 'sample',
-                                    'sample_audvis_filt-0-40_raw.fif')
-    # raw = mne.io.read_raw_fif(sample_data_raw_file)
-    raw = mne.io.read_raw_brainvision('C:/Users/Fatima/downloads/Control1025.vhdr',preload=True, verbose=False)
+    
+    raw = mne.io.read_raw_brainvision('C:/Users/Fatima/downloads/Control1025.vhdr',misc='auto')
+    raw.load_data()  
+    raw.resample(256, npad="auto") 
+    raw.filter(1, 30, fir_design='firwin', picks=['eeg'])
+    raw.set_eeg_reference('average', projection=True).apply_proj()
+    # events_from_annot,event_dict = mne.events_from_annotations(raw)
+                           
+    # reject_criteria = dict(eeg=100e-6)                              
+                                                                                                                 
+    # epochs = mne.Epochs(raw, events_from_annot[0],tmin=-0.1, tmax=1.6,
+    #                 reject=reject_criteria, baseline = (None,0), preload=True, picks=['eeg'])
 
-    print(raw)
-    print(raw.info)
+    # ica = mne.preprocessing.ICA(n_components=50, random_state=97, method='fastica')
 
-    # raw.plot_psd(fmax=50)
-    # raw.plot(duration=5, n_channels=30)
+    # ica.fit(epochs)
+    # ica.exclude =[0,3,4]
+    # ica.apply(epochs)  
 
     sampling_freq = raw.info['sfreq']
     start_stop_seconds = np.array([11, 13])
