@@ -50,9 +50,10 @@ export default function App({ navigation }) {
 }
 const Styles = StyleSheet.create({
   headset: {
-    width: "100%",
-    height: "60%",
-    marginTop: "10%",
+    width: "70%",
+    height: "50%",
+    marginTop: "15%",
+    marginLeft: "16%",
   },
   loginBtn: {
     width: "80%",
@@ -75,13 +76,12 @@ const Styles = StyleSheet.create({
   innerContainer: {
     flexDirection: "column",
     alignItems: "center",
-    marginTop: -20,
+    marginTop: "8%",
   },
   txt: {
-    color: "#264CE3",
+    color: "#FFFFFF",
     fontSize: 17,
-    fontWeight: "bold",
-    textDecorationLine: "underline",
+     textDecorationLine: "underline",
   },
   statusContainer: {
     flexDirection: "row",

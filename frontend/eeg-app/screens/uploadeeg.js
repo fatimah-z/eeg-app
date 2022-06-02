@@ -95,15 +95,15 @@ const Styles = StyleSheet.create({
     marginTop: "72%",
   },
   txt: {
-    color: "#264CE3",
+    color: "#FFFFFF",
     fontSize: 17,
-    fontWeight: "bold",
+   
     textDecorationLine: "underline",
   },
   uploadtxt: {
-    color: "#264CE3",
+    color: "#FFFFFF",
     fontSize: 17,
-    fontWeight: "bold",
+  
     textDecorationLine: "underline",
   },
   statusContainer: {

@@ -18,8 +18,8 @@ export const login = async (username, password, setSignedIn) => {
       // SUCCESSFULL LOGIN
       console.log("Response of login api:", res);
       setAuthTokens({
-        accessToken: response.data.token,
-        refreshToken: response.data.token,
+        accessToken: res.data.token,
+        refreshToken: res.data.token,
       }).then(() => {
         getAccessToken().then((token) => {
           console.log("ACCESS_TOKEN: ", token);
@@ -28,22 +28,20 @@ export const login = async (username, password, setSignedIn) => {
         });
       });
     })
-    .catch(async (err) => {
+    .catch((err) => {
+      console.log(err);
       //UNSUCCESSFULL LOGIN
       clearAuthTokens().then(() => {
-        setAuthTokens({
-          accessToken: "testtoken",
-          refreshToken: "testtoken",
-        });
+        // setAuthTokens({
+        //   accessToken: "testtoken",
+        //   refreshToken: "testtoken",
+        // });
         //should be false here doing true for testing only
-        // setSignedIn(false)
-        setSignedIn(true);
-
+        // setSignedIn(true);
+        setSignedIn(false);
         Alert.alert("Wrong username and password!");
       });
     });
-  // save tokens to storage
-  // let response = { data: { access_token: username, refresh_token: password } };
 };
 
 // 5. Log out by clearing the auth tokens from AsyncStorage

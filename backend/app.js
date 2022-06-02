@@ -8,7 +8,6 @@ const jwt = require("jsonwebtoken");
 const url = "mongodb://127.0.0.1:27017/Neuroscan";
 const dotenv = require("dotenv");
 var cors = require("cors");
-app.use(cors());
 // get config vars
 dotenv.config();
 
@@ -33,6 +32,7 @@ var app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
