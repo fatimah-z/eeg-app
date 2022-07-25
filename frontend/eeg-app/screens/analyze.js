@@ -46,7 +46,7 @@ export default function App({ navigation }) {
   ]);
   const view = async () => {
     try {
-      const response = await fetch("http://192.168.100.171:3000/view", {
+      const response = await fetch("http://192.168.19.199:4000/view", {
         method: "GET",
       });
       const resp = await response.json();
@@ -64,7 +64,7 @@ export default function App({ navigation }) {
   };
   return (
     <View style={Styles.container}>
-      <ImageBackground
+      {/* <ImageBackground
         source={Background}
         resizeMode="cover"
         style={Styles.image}
@@ -87,9 +87,9 @@ export default function App({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-      </ImageBackground>
+      </ImageBackground> */}
 
-      {/* <Button title="show eeg signals" onPress={() => view()} />
+      <Button title="show eeg signals" onPress={() => view()} />
 
       {!loading &&
       secondarr != null &&
@@ -132,10 +132,14 @@ export default function App({ navigation }) {
             borderRadius: 16,
             flex: 1,
           }}
+          
         />
       ) : (
         <Text>loading data....</Text>
-      )} */}
+      )}
+      <TouchableOpacity style={Styles.loginBtn} onPress={onAnalyze}>
+              <Text style={Styles.loginText}>Classify EEG Data</Text>
+      </TouchableOpacity>
     </View>
   );
 }
