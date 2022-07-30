@@ -9,19 +9,24 @@ import json
 
 from flask import Flask, jsonify, send_file,stream_with_context
 from flask_cors import CORS
+from dotenv import load_dotenv
 
+load_dotenv()
+
+RAW_BRAINVISION_PATH = os.getenv('RAW_BRAINVISION_PATH')
+HOST =os.getenv('HOST')
 app = Flask(__name__)
 CORS(app)
 
 @app.route('/view', methods=['GET'])
 def getEEG():
     
-    raw = mne.io.read_raw_brainvision('C:/Users/Fatima/downloads/Control1025.vhdr',misc='auto')
+    raw = mne.io.read_raw_brainvision(RAW_BRAINVISION_PATH,misc='auto')
     raw.load_data()  
     # raw.resample(256, npad="auto") 
     # raw.filter(1, 30, fir_design='firwin', picks=['eeg'])
     # raw.set_eeg_reference('average', projection=True).apply_proj()
-    # events_from_annot,event_dict = mne.events_from_annotations(raw)
+    # events_from_annot,event_dict = mne.events_from_annotations(raw)wait 1 sec
                            
     # reject_criteria = dict(eeg=100e-6)                              
                                                                                                                  
@@ -66,7 +71,7 @@ def getEEG():
    
 
 if __name__ == "__main__":
-    app.run(host='192.168.100.95', port='4000',debug=True)
+    app.run(HOST, port='4000',debug=True)
     
 
 
