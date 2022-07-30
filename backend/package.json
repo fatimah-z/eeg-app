@@ -20,6 +20,7 @@
     "morgan": "~1.9.1",
     "node-fetch": "^2.6.7",
     "nodemon": "^2.0.16",
+    "recharts": "^2.1.12",
     "request": "^2.88.2"
   }
 }

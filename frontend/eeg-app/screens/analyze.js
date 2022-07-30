@@ -14,16 +14,26 @@ import DropDownPicker from "react-native-dropdown-picker";
 import EEGData from "../assets/images/EEGdata.png";
 import Background from "../assets/images/background.png";
 import Done from "../assets/images/done.png";
+import graph from "../../../backend/graph.png";
+// import {
+//   LineChart,
+//   BarChart,
+//   PieChart,
+//   ProgressChart,
+//   ContributionGraph,
+//   StackedBarChart,
+// } from "react-native-chart-kit";
+// import { Dimensions } from "react-native";
 
 import {
   LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from "react-native-chart-kit";
-import { Dimensions } from "react-native";
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend
+} from "recharts";
 
 export default function App({ navigation }) {
   const [data, setdata] = useState({});
@@ -33,8 +43,12 @@ export default function App({ navigation }) {
   const [secondarr, setsecondarr] = useState([]);
   const [loading, setisloading] = useState(true);
   const [arr, setarr] = useState([1, 2, 3]);
+  let eegdata =[];
 
-  useEffect(() => {}, []);
+  useEffect(()=>{
+
+  },[])
+
   const onAnalyze = () => {
     navigation.navigate("Classify");
   };
@@ -44,33 +58,69 @@ export default function App({ navigation }) {
     { label: "CSV", value: "csv" },
     { label: "TXT", value: "txt" },
   ]);
+
   const view = async () => {
     try {
-      const response = await fetch("http://192.168.19.199:4000/view", {
+      const response = await fetch("http://192.168.100.95:4000/view", {
         method: "GET",
       });
       const resp = await response.json();
+      console.log("helloooooo");
+      console.log(resp);
       setdata(resp);
-      setfirstarr(resp[0].arr1);
+      setfirstarr(resp.arr1);
       console.log(firstarr);
-      setsecondarr(resp[1].arr2);
-
+      setsecondarr(resp.arr2);
       console.log(secondarr);
-      // console.log(resp[0].arr1);
+
     } catch (error) {
     } finally {
+      if(firstarr.length>0 && secondarr.length>0){
+
+        loaddata();
+      }
       setisloading(false);
     }
   };
+
+  const test1 = [['data1','data2'],['data3','data4'],['data5','data6']];
+  const test2 = [1,2]
+  const loaddata = ()=>{
+    let index_num=0;
+    for(let i=0;i<firstarr.length;i++){
+      var one_channel =[];
+      for(let j=0;j<firstarr[i].length;j++){
+        one_channel[j]={'data':firstarr[i][j]/Math.pow(10, -11),'time':secondarr[j]}
+        index_num++;
+      }
+      eegdata.push(one_channel);
+    }
+    // firstarr.map(function(element,index){
+    //   element.forEach((el,index1) => {
+    //       eegdata[index1]= {
+    //       'data': el,
+    //       'time' : secondarr[index1]
+    //     };
+    //   });
+    // });
+    console.log("eegd"+eegdata[0][0].time+" "+eegdata[0][0].data);
+    console.table(eegdata);
+  };
   return (
     <View style={Styles.container}>
-      {/* <ImageBackground
+      
+      {/* <View style={Styles.eegimgdiv}>
+
+      <Image source={graph}></Image>
+      </View> */}
+     
+      <ImageBackground
         source={Background}
         resizeMode="cover"
         style={Styles.image}
       >
         <View style={Styles.eegimgdiv}>
-          <Image style={Styles.eegdataimg} source={EEGData}></Image>
+          <Image style={Styles.eegdataimg} source={graph}></Image>
         </View>
 
         <View style={Styles.innerContainer}>
@@ -87,9 +137,10 @@ export default function App({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-      </ImageBackground> */}
+      </ImageBackground>
 
-      <Button title="show eeg signals" onPress={() => view()} />
+{/* ----------------graph using line chart----------------------------------------------------------- */}
+      {/* <Button title="show eeg signals" onPress={() => view()} />
 
       {!loading &&
       secondarr != null &&
@@ -136,7 +187,42 @@ export default function App({ navigation }) {
         />
       ) : (
         <Text>loading data....</Text>
-      )}
+      )} */}
+{/* ---------------------------------------------------------------------------------------------------- */}
+<Button title="show eeg signals" onPress={() => view()} />
+{/* {!loading &&
+secondarr != null &&
+firstarr != null 
+?(
+<LineChart
+      width={1000}
+      height={500}
+      data={
+      eegdata[0]
+    }
+      margin={{
+        top: 5,
+        right: 30,
+        left: 20,
+        bottom: 5
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="time" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Line data={eegdata[0]} type="monotone" dataKey="data" stroke="#C13324" />
+      
+      {eegdata.map(function(element,index){
+        return <Line data={element} key={index} type="monotone" dataKey="data" stroke="#C13324" activeDot={{ r: 8 }} />
+      })}
+    </LineChart>):(
+      <Text>loading data....</Text>
+    )
+} */}
+  
+    
       <TouchableOpacity style={Styles.loginBtn} onPress={onAnalyze}>
               <Text style={Styles.loginText}>Classify EEG Data</Text>
       </TouchableOpacity>
@@ -207,7 +293,7 @@ const Styles = StyleSheet.create({
     color: "#FFFFFF",
   },
 
-  eegdataimg: { width: "109%", height: "300%", marginTop: "24%" },
+  eegdataimg: { width: "100%", height: "300%", marginTop: "24%" },
   eegimgdiv: {
     flexDirection: "row",
     alignItems: "center",

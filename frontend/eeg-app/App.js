@@ -137,59 +137,8 @@ export default function App() {
         )}
       </NavigationContainer>
     </AuthContext.Provider>
+    // <AnalyzeScreen/>
 
-    // <Navigator />
-    //   <View style={styles.container}>
-    //     <Button
-    //     title='show eeg signals'
-    //     onPress={()=>view()}
-    //     />
-
-    //     { !loading && secondarr!=null && firstarr!=null && x!=null && y!=null? (
-
-    //   <LineChart
-    //   data={{
-    //     labels: firstarr.map(element=>
-    //       Math.round(element*100)/100
-    //     ),
-    //     datasets: [{
-    //       data: secondarr.map(element=>
-    //         element/Math.pow(10,-11)
-    //       )
-    //     }]
-    //   }}
-    //   width={Dimensions.get('window').width} // from react-native
-    //   height={500}
-    //   chartConfig={{
-    //     backgroundColor: '#F6DDCC',
-    //     backgroundGradientFrom: '#E74C3C  ',
-    //     backgroundGradientTo: '#EC7063',
-    //     //decimalPlaces: 1, // optional, defaults to 2dp
-    //     withDots:false,
-    //     strokeWidth:2,
-    //     withInnerLines:false,
-    //     withOuterLines:false,
-    //     xLabelsOffset: 10,
-    //     withVerticalLines:false,
-    //     withHorizontalLines: false,
-    //     horizontalLabelRotation:30,
-    //     verticalLabelRotation:30,
-    //     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-    //     style: {
-    //       borderRadius: 16
-    //     }
-    //   }}
-    //   style={{
-    //     margin:20,
-    //     marginVertical: 8,
-    //     borderRadius: 16,
-    //     flex:1
-    //   }}
-    // />
-
-    //     ):<Text>loading data....</Text>}
-
-    //   </View>
   );
 }
 

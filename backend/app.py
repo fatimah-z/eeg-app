@@ -6,6 +6,7 @@ import numpy as np
 import mne
 import flask 
 import json
+import matplotlib.pyplot as plt, mpld3
 
 from flask import Flask, jsonify, send_file,stream_with_context
 from flask_cors import CORS
@@ -53,20 +54,23 @@ def getEEG():
     arr1 =data.tolist()
     arr2 = times.tolist()
     list1={'arr1':arr1,'arr2':arr2}
-
+    fig1 = plt.figure()
+    plt.plot(times,data.T)
+    plt.savefig('graph.png')
+    # mpld3.save_html(fig1,'graph.html')
     #writing to a file
     # with open('eegdata.json','w') as file1:
     #    json.dump(list1,file1)
 
     
     #--------------------------------------------------------------------------------
-    return jsonify({'arr1':arr1,'arr2':arr2})
+    return jsonify({'arr2':'sent'})
     # return send_file('eegdata.json')
    
    
 
 if __name__ == "__main__":
-    app.run(host='192.168.100.95', port='4000',debug=True)
+    app.run(host='192.168.1.103', port='4000',debug=True)
     
 
 
