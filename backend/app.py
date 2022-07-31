@@ -4,13 +4,13 @@ from turtle import mode
 from matplotlib.font_manager import json_dump
 import numpy as np
 import mne
-import flask 
-import json
 import matplotlib.pyplot as plt, mpld3
-
+import pandas 
 from flask import Flask, jsonify, send_file,stream_with_context
 from flask_cors import CORS
 from dotenv import load_dotenv
+from scipy import stats
+
 
 load_dotenv()
 
@@ -23,7 +23,30 @@ CORS(app)
 def getEEG():
     
     raw = mne.io.read_raw_brainvision(RAW_BRAINVISION_PATH,misc='auto')
-    raw.load_data()  
+    raw.load_data() 
+     
+    epochs=mne.make_fixed_length_epochs(raw,duration=5,overlap=1)
+    array= epochs.get_data()
+    print(array)
+   
+    print(array.shape) #noofepochs, channels, length ofsignals (366,63,2500)                   
+    features=[]
+    features.append(np.mean(array,axis=-1))
+    features.append(np.std(array,axis=-1))
+    features.append(np.ptp(array, axis=-1))
+    features.append(np.var(array,axis=-1))
+    features.append(np.min(array,axis=-1))
+    features.append(np.max(array,axis=-1))
+    features.append(np.argmin(array, axis=-1))
+    features.append(np.argmax(array,axis=-1))
+    features.append(np.mean(array**2,axis=-1))
+    features.append(np.sqrt(np.mean(array**2,axis=-1)))
+    features.append(np.sum(np.abs(np.diff(array,axis=-1)),axis=-1))
+    features.append(stats.skew(array,axis=-1))
+    features.append(stats.kurtosis(array,axis=-1))
+    features=np.array(features)
+    
+    print(features.shape)
     # raw.resample(256, npad="auto") 
     # raw.filter(1, 30, fir_design='firwin', picks=['eeg'])
     # raw.set_eeg_reference('average', projection=True).apply_proj()
@@ -54,8 +77,7 @@ def getEEG():
 
     #--------------extracting data and time for all channels--------------------------
     data,times = raw.get_data(return_times=True)
-    print(data)
-    print(times)
+    
     arr1 =data.tolist()
     arr2 = times.tolist()
     list1={'arr1':arr1,'arr2':arr2}
@@ -75,7 +97,7 @@ def getEEG():
    
 
 if __name__ == "__main__":
-    app.run(host='192.168.1.103', port='4000',debug=True)
+    app.run(HOST, port='4000',debug=True)
     
 
 
