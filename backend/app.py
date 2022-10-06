@@ -1,10 +1,12 @@
 import os
 import os.path as op
+import subprocess
 from turtle import mode
 from matplotlib.font_manager import json_dump
 import numpy as np
 import mne
-import matplotlib.pyplot as plt, mpld3
+import matplotlib.pyplot as plt
+#, mpld3
 import pandas 
 from flask import Flask, jsonify, send_file,stream_with_context
 from flask_cors import CORS
@@ -94,7 +96,13 @@ def getEEG():
     return jsonify({'arr2':'sent'})
     # return send_file('eegdata.json')
    
-   
+@app.route('/load', methods=['GET'])
+def load_model():
+    subprocess.call(['python','C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/preprocess.py'])
+    return jsonify(
+'hello'
+    )
+
 
 if __name__ == "__main__":
     app.run(HOST, port='4000',debug=True)

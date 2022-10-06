@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
-import DatePicker from "react-native-datepicker";
+
 import Background from "../assets/images/background.png";
 import RadioForm, {
   RadioButton,
@@ -161,7 +161,7 @@ export default function App({ navigation }) {
             <View style={styles.dropdowndiv}>
               <Text style={styles.DOB}>Select DOB</Text>
               <View marginRight={"-15%"}>
-                <DatePicker mode="date" />
+                
               </View>
             </View>
           </View>

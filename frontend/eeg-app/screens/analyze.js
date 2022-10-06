@@ -82,6 +82,21 @@ export default function App({ navigation }) {
       setisloading(false);
     }
   };
+  
+  const cl = async ()=>{
+    try{
+
+      const response = await fetch("http://127.0.0.1:4000/load", {
+        method: "GET",
+      });
+      const resp = await response.json();
+      console.log("helloooooo11");
+      console.log(resp);
+
+    }catch (error) {
+
+    }
+  }
 
   const test1 = [['data1','data2'],['data3','data4'],['data5','data6']];
   const test2 = [1,2]
@@ -223,7 +238,7 @@ firstarr != null
 } */}
   
     
-      <TouchableOpacity style={Styles.loginBtn} onPress={onAnalyze}>
+      <TouchableOpacity style={Styles.loginBtn} onPress={()=>cl()}>
               <Text style={Styles.loginText}>Classify EEG Data</Text>
       </TouchableOpacity>
     </View>
