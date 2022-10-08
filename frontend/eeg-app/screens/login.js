@@ -10,69 +10,72 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
-import { getAccessToken } from "react-native-axios-jwt";
+import { firebase } from "../configauth";
 import Background from "../assets/images/background.png";
-import { login } from "../auth/auth";
-import AuthContext from "../auth/authContext";
-export default function App({ navigation }) {
-  const [username, setUsername] = useState("");
+
+import ImportData from "./importeegdata";
+const Login = ({ navigation }) => {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const authContextValue = useContext(AuthContext);
-  const signedIn = authContextValue.signedIn;
-  const setSignedIn = authContextValue.setSignedIn;
-  const onLogin = () => {
-    login(username, password, setSignedIn);
+
+  const loginUser = async (email, password) => {
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+      console.log(email);
+
+      navigation.navigate("PatientHistory", {
+        sendEmail: email,
+      });
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
     <View style={styles.outterdiv}>
-      <ImageBackground
-        source={Background}
-        resizeMode="cover"
-        style={styles.image}
-      >
-        <View>
-          <Text style={styles.appnametxt}>NEUROSCAN</Text>
+      <View style={styles.namediv}>
+        <Text style={styles.appnametxt}>WELCOME TO NEUROSCAN</Text>
+      </View>
+
+      <View style={styles.container}>
+        <StatusBar style="auto" />
+
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Email"
+            placeholderTextColor="#808080"
+            onChangeText={(val) => setEmail(val)}
+          />
         </View>
 
-        <View style={styles.container}>
-          <StatusBar style="auto" />
-
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.TextInput}
-              placeholder="Username"
-              placeholderTextColor="#FFFFFF"
-              onChangeText={(username) => setUsername(username)}
-            />
-          </View>
-
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.TextInput}
-              placeholder="Password"
-              placeholderTextColor="#FFFFFF"
-              secureTextEntry={true}
-              onChangeText={(password) => setPassword(password)}
-            />
-          </View>
-
-          <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-            <Text style={styles.forgot_button}>SignUp</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.forgot_button}>Forgot Password?</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.loginBtn} onPress={onLogin}>
-            <Text style={styles.loginText}>LogIn</Text>
-          </TouchableOpacity>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Password"
+            placeholderTextColor="#808080"
+            secureTextEntry={true}
+            onChangeText={(password) => setPassword(password)}
+          />
         </View>
-      </ImageBackground>
+
+        <TouchableOpacity onPress={() => navigation.navigate("Registeration")}>
+          <Text style={styles.forgot_button}>Signup</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={styles.forgot_button}>Forgot Password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.loginBtn}
+          onPress={() => loginUser(email, password)}
+        >
+          <Text style={styles.loginText}>Login</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-}
-
+};
+export default Login;
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
@@ -93,15 +96,15 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 10,
-    borderColor: "#FFFFFF",
+    borderColor: "#000000",
     borderBottomWidth: 1,
-    color: "#FFFFFF",
+    color: "#000000",
   },
 
   forgot_button: {
     height: 30,
     marginBottom: 30,
-    color: "#FFFFFF",
+    color: "#000000",
     fontWeight: "bold",
     fontSize: 15,
   },
@@ -112,12 +115,15 @@ const styles = StyleSheet.create({
   },
   appnametxt: {
     textAlign: "center",
-    fontWeight: "bold",
+
     fontSize: 18,
     marginTop: 0,
-    width: 400,
-    color: "#FFFFFF",
+    width: 200,
+
+    color: "#000080",
     marginTop: 30,
+    borderColor: "#000080",
+    borderWidth: 3,
   },
 
   loginBtn: {
@@ -127,12 +133,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
-    backgroundColor: "#BB005E",
+    backgroundColor: "#000080",
   },
 
+  namediv: {
+    alignItems: "center",
+  },
   outterdiv: {
-    backgroundColor: "#FCF1FB`",
+    backgroundColor: "c",
     height: "100%",
+    justifyContent: "center",
+    alignContent: "center",
+    flex: 1,
   },
   loginText: {
     color: "#FFFFFF",

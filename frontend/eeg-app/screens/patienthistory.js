@@ -10,17 +10,18 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
-import Background from "../assets/images/background.png";
 import RadioForm, {
   RadioButton,
   RadioButtonInput,
   RadioButtonLabel,
 } from "react-native-simple-radio-button";
 
-export default function App({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function App({ navigation, route }) {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [contact, setContact] = useState("");
   const [gender, setGender] = useState("");
   const [head, setHead] = useState("");
   const [parental, setParental] = useState("");
@@ -29,8 +30,36 @@ export default function App({ navigation }) {
   const [headIndex, setHeadIndex] = useState(0);
   const [parentalIndex, setParentalIndex] = useState(0);
   const [geneticIndex, setGeneticIndex] = useState(0);
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const onSubmit = () => {
-    navigation.navigate("ReportGeneration");
+    console.log(firstName);
+    console.log(lastName);
+    console.log(contact);
+    console.log(gender);
+    console.log(head);
+    console.log(parental);
+    console.log(genatic);
+    console.log(genderIndex);
+    console.log(headIndex);
+    console.log(parentalIndex);
+    console.log(geneticIndex);
+    // console.log(route.params.sendEmail);
+    console.log(date);
+
+    // navigation.navigate("Home", {
+    //   screen: "ImportData",
+    //   params: {
+    //     firstName: firstName,
+    //     lastName: lastName,
+    //     contact: contact,
+    //     gender: gender,
+    //     head: head,
+    //     parental: parental,
+    //     genatic: genatic,
+    // email: route.params.sendEmail,
+    //   },
+    // });
   };
   var radio_props = [
     { label: "Male", value: "male" },
@@ -119,191 +148,200 @@ export default function App({ navigation }) {
   return (
     <View style={styles.outterdiv}>
       <ImageBackground
-        source={Background}
-        resizeMode="cover"
-        style={styles.image}
+        source={require("../assets/background.jpg")}
+        style={{ width: "100%", height: "100%" }}
       >
         <View>
           <Text style={styles.appnametxt}>Patient History Form</Text>
         </View>
-        <View style={styles.container}>
-          <StatusBar style="auto" />
-          <View style={styles.nameouttercontainer}>
-            <View style={styles.namefields}>
-              <TextInput
-                color="#FFFFFF"
-                placeholder="First Name"
-                placeholderTextColor="#FFFFFF"
-                onChangeText={(email) => setEmail(email)}
-              />
-            </View>
-            <View style={styles.namefields}>
-              <TextInput
-                color="#FFFFFF"
-                placeholder="Last Name"
-                placeholderTextColor="#FFFFFF"
-                onChangeText={(email) => setEmail(email)}
-              />
-            </View>
-          </View>
-          <View style={styles.nameouttercontainer}>
-            <View style={styles.namefields}>
-              <TextInput
-                color="#FFFFFF"
-                placeholder="Contact Number"
-                placeholderTextColor="#FFFFFF"
-                onChangeText={(email) => setEmail(email)}
-              />
-            </View>
-          </View>
-
-          <View style={styles.inputView}>
-            <View style={styles.dropdowndiv}>
-              <Text style={styles.DOB}>Select DOB</Text>
-              <View marginRight={"-15%"}>
-                
+        <View style={styles.box}>
+          <View style={styles.container}>
+            <StatusBar style="auto" />
+            <View style={styles.nameouttercontainer}>
+              <View style={styles.namefields}>
+                <TextInput
+                  color="#FFFFFF"
+                  placeholder="First Name"
+                  placeholderTextColor="#000000"
+                  onChangeText={(val) => setFirstName(val)}
+                />
+              </View>
+              <View style={styles.namefields}>
+                <TextInput
+                  color="#FFFFFF"
+                  placeholder="Last Name"
+                  placeholderTextColor="#000000"
+                  onChangeText={(val) => setLastName(val)}
+                />
               </View>
             </View>
-          </View>
-          <View style={styles.radio}>
-            <Text style={styles.radioHeading}>Gender</Text>
-            <RadioForm formHorizontal={true}>
-              {radio_props.map((obj, i) => (
-                <RadioButton labelHorizontal={true} key={i}>
-                  {/*  You can set RadioButtonLabel before RadioButtonInput */}
-                  <RadioButtonInput
-                    obj={obj}
-                    index={i}
-                    isSelected={genderIndex === i}
-                    onPress={handleGenderOnPress}
-                    borderWidth={1}
-                    buttonInnerColor={"#fff"}
-                    buttonOuterColor={"#fff"}
-                    buttonSize={20}
-                    buttonOuterSize={30}
-                    buttonStyle={{}}
-                    buttonWrapStyle={{ marginLeft: 10 }}
-                  />
-                  <RadioButtonLabel
-                    obj={obj}
-                    index={i}
-                    labelHorizontal={true}
-                    onPress={handleGenderOnPress}
-                    labelStyle={{ fontSize: 15, color: "#fff" }}
-                    labelWrapStyle={{}}
-                  />
-                </RadioButton>
-              ))}
-            </RadioForm>
-          </View>
-          <View style={styles.radio}>
-            <Text style={styles.radioHeading}>Head trauma</Text>
-            <RadioForm formHorizontal={true}>
-              {radio_propshead.map((obj, i) => (
-                <RadioButton labelHorizontal={true} key={i}>
-                  {/*  You can set RadioButtonLabel before RadioButtonInput */}
-                  <RadioButtonInput
-                    obj={obj}
-                    index={i}
-                    isSelected={headIndex === i}
-                    onPress={handleHeadTraumaOnPress}
-                    borderWidth={1}
-                    buttonInnerColor={"#fff"}
-                    buttonOuterColor={"#fff"}
-                    buttonSize={20}
-                    buttonOuterSize={30}
-                    buttonStyle={{}}
-                    buttonWrapStyle={{ marginLeft: 10 }}
-                  />
-                  <RadioButtonLabel
-                    obj={obj}
-                    index={i}
-                    labelHorizontal={true}
-                    onPress={handleHeadTraumaOnPress}
-                    labelStyle={{ fontSize: 15, color: "#fff" }}
-                    labelWrapStyle={{}}
-                  />
-                </RadioButton>
-              ))}
-            </RadioForm>
-          </View>
-          <View style={styles.radio}>
-            <Text style={styles.radioHeading}>Prental injury</Text>
-            <RadioForm formHorizontal={true}>
-              {radio_propsgenetic.map((obj, i) => (
-                <RadioButton labelHorizontal={true} key={i}>
-                  {/*  You can set RadioButtonLabel before RadioButtonInput */}
-                  <RadioButtonInput
-                    obj={obj}
-                    index={i}
-                    isSelected={parentalIndex === i}
-                    onPress={handleParentalInjuryOnPress}
-                    borderWidth={1}
-                    buttonInnerColor={"#fff"}
-                    buttonOuterColor={"#fff"}
-                    buttonSize={20}
-                    buttonOuterSize={30}
-                    buttonStyle={{}}
-                    buttonWrapStyle={{ marginLeft: 10 }}
-                  />
-                  <RadioButtonLabel
-                    obj={obj}
-                    index={i}
-                    labelHorizontal={true}
-                    onPress={handleGenderOnPress}
-                    labelStyle={{ fontSize: 15, color: "#fff" }}
-                    labelWrapStyle={{}}
-                  />
-                </RadioButton>
-              ))}
-            </RadioForm>
-          </View>
-          <View style={styles.radio}>
-            <Text style={styles.radioHeading}>Genetic Influece</Text>
-            <RadioForm formHorizontal={true}>
-              {radio_propsgenetic.map((obj, i) => (
-                <RadioButton labelHorizontal={true} key={i}>
-                  {/*  You can set RadioButtonLabel before RadioButtonInput */}
-                  <RadioButtonInput
-                    obj={obj}
-                    index={i}
-                    isSelected={geneticIndex === i}
-                    onPress={handleGeneticInfluenceOnPress}
-                    borderWidth={1}
-                    buttonInnerColor={"#fff"}
-                    buttonOuterColor={"#fff"}
-                    buttonSize={20}
-                    buttonOuterSize={30}
-                    buttonStyle={{}}
-                    buttonWrapStyle={{ marginLeft: 10 }}
-                  />
-                  <RadioButtonLabel
-                    obj={obj}
-                    index={i}
-                    labelHorizontal={true}
-                    onPress={handleGeneticInfluenceOnPress}
-                    labelStyle={{ fontSize: 15, color: "#fff" }}
-                    labelWrapStyle={{}}
-                  />
-                </RadioButton>
-              ))}
-            </RadioForm>
-          </View>
-          <View style={styles.nameouttercontainer}>
-            <View style={styles.namefields}>
-              <TextInput
-                color="#FFFFFF"
-                placeholder="Medical History"
-                placeholderTextColor="#FFFFFF"
-                onChangeText={(email) => setEmail(email)}
-                multiline
-              />
+            <View style={styles.nameouttercontainer}>
+              <View style={styles.namefields}>
+                <TextInput
+                  color="#FFFFFF"
+                  placeholder="Contact Number"
+                  placeholderTextColor="#000000"
+                  onChangeText={(val) => setContact(val)}
+                />
+              </View>
             </View>
-          </View>
-          <View style={styles.submitbtndiv}>
-            <TouchableOpacity style={styles.loginBtn} onPress={onSubmit}>
-              <Text style={styles.loginText}>Submit</Text>
-            </TouchableOpacity>
+
+            <View style={styles.inputView}>
+              <View style={styles.dropdowndiv}>
+                <Text
+                  style={styles.DOB}
+                  onPress={() => setShowDatePicker(true)}
+                >
+                  Select DOB
+                </Text>
+                <View marginRight={"-15%"} marginTop={"4.7%"}>
+                  {showDatePicker ? (
+                    <DateTimePicker
+                      value={date}
+                      mode="date" // or date
+                      onChange={(event, selectedDate) => {
+                        setDate(selectedDate);
+                        setShowDatePicker(false);
+                      }}
+                      on
+                    />
+                  ) : null}
+                  <Text onPress={() => setShowDatePicker(true)}>
+                    {date.toDateString()}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.radio}>
+              <Text style={styles.radioHeading}>Gender</Text>
+              <RadioForm formHorizontal={true}>
+                {radio_props.map((obj, i) => (
+                  <RadioButton labelHorizontal={true} key={i}>
+                    {/*  You can set RadioButtonLabel before RadioButtonInput */}
+                    <RadioButtonInput
+                      obj={obj}
+                      index={i}
+                      isSelected={genderIndex === i}
+                      onPress={handleGenderOnPress}
+                      borderWidth={1}
+                      buttonInnerColor={"#000"}
+                      buttonOuterColor={"#000"}
+                      buttonSize={20}
+                      buttonOuterSize={30}
+                      buttonStyle={{}}
+                      buttonWrapStyle={{ marginLeft: 10 }}
+                    />
+                    <RadioButtonLabel
+                      obj={obj}
+                      index={i}
+                      labelHorizontal={true}
+                      onPress={handleGenderOnPress}
+                      labelStyle={{ fontSize: 15, color: "#000" }}
+                      labelWrapStyle={{}}
+                    />
+                  </RadioButton>
+                ))}
+              </RadioForm>
+            </View>
+            <View style={styles.radio}>
+              <Text style={styles.radioHeading}>Head trauma</Text>
+              <RadioForm formHorizontal={true}>
+                {radio_propshead.map((obj, i) => (
+                  <RadioButton labelHorizontal={true} key={i}>
+                    {/*  You can set RadioButtonLabel before RadioButtonInput */}
+                    <RadioButtonInput
+                      obj={obj}
+                      index={i}
+                      isSelected={headIndex === i}
+                      onPress={handleHeadTraumaOnPress}
+                      borderWidth={1}
+                      buttonInnerColor={"#000"}
+                      buttonOuterColor={"#000"}
+                      buttonSize={20}
+                      buttonOuterSize={30}
+                      buttonStyle={{}}
+                      buttonWrapStyle={{ marginLeft: 10 }}
+                    />
+                    <RadioButtonLabel
+                      obj={obj}
+                      index={i}
+                      labelHorizontal={true}
+                      onPress={handleHeadTraumaOnPress}
+                      labelStyle={{ fontSize: 15, color: "#000" }}
+                      labelWrapStyle={{}}
+                    />
+                  </RadioButton>
+                ))}
+              </RadioForm>
+            </View>
+            <View style={styles.radio}>
+              <Text style={styles.radioHeading}>Prental injury</Text>
+              <RadioForm formHorizontal={true}>
+                {radio_propsgenetic.map((obj, i) => (
+                  <RadioButton labelHorizontal={true} key={i}>
+                    {/*  You can set RadioButtonLabel before RadioButtonInput */}
+                    <RadioButtonInput
+                      obj={obj}
+                      index={i}
+                      isSelected={parentalIndex === i}
+                      onPress={handleParentalInjuryOnPress}
+                      borderWidth={1}
+                      buttonInnerColor={"#000"}
+                      buttonOuterColor={"#000"}
+                      buttonSize={20}
+                      buttonOuterSize={30}
+                      buttonStyle={{}}
+                      buttonWrapStyle={{ marginLeft: 10 }}
+                    />
+                    <RadioButtonLabel
+                      obj={obj}
+                      index={i}
+                      labelHorizontal={true}
+                      onPress={handleGenderOnPress}
+                      labelStyle={{ fontSize: 15, color: "#000" }}
+                      labelWrapStyle={{}}
+                    />
+                  </RadioButton>
+                ))}
+              </RadioForm>
+            </View>
+            <View style={styles.radio}>
+              <Text style={styles.radioHeading}>Genetic Influece</Text>
+              <RadioForm formHorizontal={true}>
+                {radio_propsgenetic.map((obj, i) => (
+                  <RadioButton labelHorizontal={true} key={i}>
+                    {/*  You can set RadioButtonLabel before RadioButtonInput */}
+                    <RadioButtonInput
+                      obj={obj}
+                      index={i}
+                      isSelected={geneticIndex === i}
+                      onPress={handleGeneticInfluenceOnPress}
+                      borderWidth={1}
+                      buttonInnerColor={"#000"}
+                      buttonOuterColor={"#000"}
+                      buttonSize={20}
+                      buttonOuterSize={30}
+                      buttonStyle={{}}
+                      buttonWrapStyle={{ marginLeft: 10 }}
+                    />
+                    <RadioButtonLabel
+                      obj={obj}
+                      index={i}
+                      labelHorizontal={true}
+                      onPress={handleGeneticInfluenceOnPress}
+                      labelStyle={{ fontSize: 15, color: "#000" }}
+                      labelWrapStyle={{}}
+                    />
+                  </RadioButton>
+                ))}
+              </RadioForm>
+            </View>
+
+            <View style={styles.submitbtndiv}>
+              <TouchableOpacity style={styles.loginBtn} onPress={onSubmit}>
+                <Text style={styles.loginText}>Submit</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ImageBackground>
@@ -329,9 +367,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 10,
-    borderColor: "#FFFFFF",
+    borderColor: "#000000",
     borderBottomWidth: 1,
-    color: "#FFFFFF",
+    color: "#000000",
   },
   radio: {
     display: "flex",
@@ -346,7 +384,7 @@ const styles = StyleSheet.create({
     marginLeft: "30%",
     marginTop: "1%",
 
-    color: "#FFFFFF",
+    color: "#000000",
   },
   submitbtndiv: {
     display: "flex",
@@ -359,7 +397,8 @@ const styles = StyleSheet.create({
     padding: 10,
     width: "25%",
     textAlign: "right",
-    color: "#FFFFFF",
+    color: "#000000",
+    marginLeft: -15,
   },
 
   image: {
@@ -379,10 +418,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 18,
-    marginTop: 0,
+    marginTop:"25%",
+
     width: 400,
-    color: "#FFFFFF",
-    marginTop: 30,
+    color: "#000000",
   },
 
   namefields: {
@@ -390,7 +429,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 10,
-    borderColor: "#FFFFFF",
+    borderColor: "#000000",
     borderBottomWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -401,16 +440,16 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
-    backgroundColor: "#BB005E",
+    marginBottom: "13%",
+    backgroundColor: "#81E3CD",
   },
   nameouttercontainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: "50%",
+    width: "60%",
 
-    marginLeft: "24%",
+    marginLeft: "17%",
   },
 
   outterdiv: {
@@ -418,6 +457,21 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   loginText: {
-    color: "#FFFFFF",
+    color: "#000000",
+    fontWeight: "bold",
+  },
+  box: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    backgroundColor: "#FFFFFF",
+    borderRadius: 15,
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    height: "70%",
+    margin: 20,
+    marginTop: "5%",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "scroll",
   },
 });

@@ -87,22 +87,17 @@ const ImportData = ({ route, navigation }) => {
         style={Styles.image}
       >
         <View>
-          <Text style={Styles.appnametxt}>Upload Data</Text>
+          <Text style={Styles.appnametxt}>Profile</Text>
         </View>
         <View style={Styles.box}>
-          {/* <View style={Styles.uploadimgdiv}>
-          <Image style={Styles.uploadimg} source={Upload}></Image>
-        </View> */}
+          <View>
+            <Text style={Styles.text}>Welcome</Text>
+          </View>
 
-          {/* Cetered this.. */}
-
-          <View style={Styles.galleryContainer}>
-            <View style={Styles.row}>
-              <Text style={Styles.text}>Pick your file to upload</Text>
-            </View>
+          <View>
             <View style={Styles.submitbtndiv}>
-              <TouchableOpacity style={Styles.loginBtn} onPress={openGallery}>
-                <Text style={Styles.loginText}>Open Gallery</Text>
+              <TouchableOpacity style={Styles.loginBtn}>
+                <Text style={Styles.loginText}>Upload Data</Text>
               </TouchableOpacity>
             </View>
 
@@ -112,13 +107,10 @@ const ImportData = ({ route, navigation }) => {
               </View>
             ) : null}
           </View>
-          <View style={Styles.uploadContainer}>
-            <View style={Styles.row}>
-              <Text style={Styles.text}>Upload File</Text>
-            </View>
-            <View style={Styles.submitbtndiv}>
-              <TouchableOpacity style={Styles.loginBtn} onPress={uploadFile}>
-                <Text style={Styles.loginText}>Upload</Text>
+          <View>
+            <View style={Styles.uploadbtndiv}>
+              <TouchableOpacity style={Styles.loginBtn}>
+                <Text style={Styles.loginText}>Record EEG Data</Text>
               </TouchableOpacity>
             </View>
 
@@ -179,6 +171,13 @@ const Styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
+    
+  },
+  uploadbtndiv:{
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop:"18%"
   },
   image: {
     height: "100%",
@@ -253,11 +252,8 @@ const Styles = StyleSheet.create({
     // width: "50%",
   },
   text: {
-    fontWeight: "bold",
-    marginBottom: "3%",
-    borderBottomWidth: 3,
-    borderBottomColor: "#000000",
-    fontSize: 17,
+    marginBottom: "33%",
+    fontSize: 30,
   },
   uploadimg: { width: "80%", height: "200%", marginTop: "25%" },
   uploadimgdiv: {

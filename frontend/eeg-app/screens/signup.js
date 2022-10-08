@@ -11,11 +11,49 @@ import {
   ImageBackground,
 } from "react-native";
 import Background from "../assets/images/background.png";
-export default function App({ navigation }) {
+
+import { firebase } from "../configauth";
+const Registeration = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const onSignup = () => {
-    navigation.navigate("Login");
+  const [firstname, setFirstName] = useState("");
+  const [lastname, setLastName] = useState("");
+  RegisterUser = async (email, password, firstname, lastname) => {
+    await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        firebase
+          .auth()
+          .currentUser.sendEmailVerification({
+            handleCodeInApp: true,
+            url: "https://test-3fc13.firebaseapp.com",
+          })
+          .then(() => {
+            alert("verification email sent");
+          })
+          .catch((error) => {
+            alert(error.message);
+          })
+          .then(() => {
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(firebase.auth().currentUser.uid)
+              .set({
+                firstname,
+                lastname,
+                email,
+              });
+            navigation.navigate("Login", { id: "1" });
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   return (
@@ -32,23 +70,30 @@ export default function App({ navigation }) {
         <View style={styles.container}>
           <StatusBar style="auto" />
           <View style={styles.nameouttercontainer}>
-            <View style={styles.inputView} >
+            <View style={styles.inputView}>
               <TextInput
                 color="#FFFFFF"
-                placeholder="Username"
+                placeholder="Email"
                 placeholderTextColor="#FFFFFF"
                 onChangeText={(email) => setEmail(email)}
                 style={styles.TextInput}
-                
               />
             </View>
           </View>
           <View style={styles.inputView}>
             <TextInput
               style={styles.TextInput}
-              placeholder="Email"
+              placeholder="First Name"
               placeholderTextColor="#FFFFFF"
-              onChangeText={(email) => setEmail(email)}
+              onChangeText={(val) => setFirstName(val)}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Last Name"
+              placeholderTextColor="#FFFFFF"
+              onChangeText={(val) => setLastName(val)}
             />
           </View>
 
@@ -75,14 +120,18 @@ export default function App({ navigation }) {
             <Text style={styles.forgot_button}>Not a registered user?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.loginBtn} onPress={onSignup}>
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={() => RegisterUser(email, password)}
+          >
             <Text style={styles.loginText}>SignUp</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
     </View>
   );
-}
+};
+export default Registeration;
 
 const styles = StyleSheet.create({
   container: {
@@ -161,3 +210,4 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
 });
+
