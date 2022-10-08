@@ -1,3 +1,16 @@
 node_modules/
 backend/.env
-.venv/
+frontend/eeg-app/node_modules/
+frontend/eeg-app/.expo/
+frontend/eeg-app/dist/
+frontend/eeg-app/npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+frontend/eeg-app/web-build/
+
+# macOS
+frontend/eeg-app/.DS_Store
