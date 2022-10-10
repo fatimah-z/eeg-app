@@ -10,11 +10,12 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
-import Background from "../assets/images/background.png";
+import Background from "../assets/login.jpg";
 
 import { firebase } from "../configauth";
 const Registeration = ({ navigation }) => {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
@@ -64,7 +65,7 @@ const Registeration = ({ navigation }) => {
         style={styles.image}
       >
         <View>
-          <Text style={styles.appnametxt}>NEUROSCAN</Text>
+          <Text style={styles.appnametxt}>WELCOME TO NEUROSCAN</Text>
         </View>
 
         <View style={styles.container}>
@@ -73,35 +74,29 @@ const Registeration = ({ navigation }) => {
             <View style={styles.inputView}>
               <TextInput
                 color="#FFFFFF"
-                placeholder="Email"
-                placeholderTextColor="#FFFFFF"
+                placeholder="Username"
+                placeholderTextColor="#808080"
                 onChangeText={(email) => setEmail(email)}
                 style={styles.TextInput}
               />
             </View>
           </View>
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.TextInput}
-              placeholder="First Name"
-              placeholderTextColor="#FFFFFF"
-              onChangeText={(val) => setFirstName(val)}
-            />
-          </View>
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.TextInput}
-              placeholder="Last Name"
-              placeholderTextColor="#FFFFFF"
-              onChangeText={(val) => setLastName(val)}
-            />
-          </View>
+            <View style={styles.inputView}>
+              <TextInput
+                color="#FFFFFF"
+                placeholder="Email"
+                placeholderTextColor="#808080"
+                onChangeText={(email) => setEmail(email)}
+                style={styles.TextInput}
+              />
+            </View>
+        
 
           <View style={styles.inputView}>
             <TextInput
               style={styles.TextInput}
               placeholder="Password"
-              placeholderTextColor="#FFFFFF"
+              placeholderTextColor="#808080"
               secureTextEntry={true}
               onChangeText={(password) => setPassword(password)}
             />
@@ -110,14 +105,14 @@ const Registeration = ({ navigation }) => {
             <TextInput
               style={styles.TextInput}
               placeholder="Confirm Password"
-              placeholderTextColor="#FFFFFF"
+              placeholderTextColor="#808080"
               secureTextEntry={true}
               onChangeText={(password) => setPassword(password)}
             />
           </View>
 
           <TouchableOpacity>
-            <Text style={styles.forgot_button}>Not a registered user?</Text>
+            <Text style={styles.forgot_button}>Already Registered?</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -153,15 +148,15 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 10,
-    borderColor: "#FFFFFF",
+    borderColor: "#000000",
     borderBottomWidth: 1,
-    color: "#FFFFFF",
+    color: "#000000",
   },
 
   forgot_button: {
     height: 30,
     marginBottom: 30,
-    color: "#FFFFFF",
+    color: "#000000",
     fontWeight: "bold",
     fontSize: 15,
   },
@@ -176,7 +171,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginTop: 0,
     width: 400,
-    color: "#FFFFFF",
+    color: "#000000",
     marginTop: 30,
   },
   namefields: {
@@ -184,7 +179,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 10,
-    borderColor: "#FFFFFF",
+    borderColor: "#000000",
     borderBottomWidth: 1,
   },
   loginBtn: {
@@ -193,21 +188,23 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
-    backgroundColor: "#BB005E",
+    marginTop: 30,
+    backgroundColor: "#81E3CD",
+    marginBottom:37
   },
   nameouttercontainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     width: 220,
+    marginTop:"6%"
   },
   outterdiv: {
     backgroundColor: "#FCF1FB`",
     height: "100%",
   },
   loginText: {
-    color: "#FFFFFF",
+    color: "#000000",
+    fontWeight:"bold"
   },
 });
-

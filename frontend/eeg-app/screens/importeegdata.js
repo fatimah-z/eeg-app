@@ -19,8 +19,10 @@ import * as DocumentPicker from "expo-document-picker";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "../config";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { firebase } from "../configauth";
 
 const ImportData = ({ route, navigation }) => {
+  const email = firebase.auth().currentUser.email;
   const [selectedImage, setselectedImage] = useState(false);
   const [selectedFileName, setselectedFileName] = useState("");
   const [blobFile, setBlobFile] = useState(null);
@@ -57,12 +59,12 @@ const ImportData = ({ route, navigation }) => {
             fileDownloadURL: downloadURL,
             name: selectedFileName,
             uploadedAt: Timestamp.fromDate(new Date()),
-            // useremail: route.params.email,
-            // patientData: {
-            //   firstName: route.params.firstName,
-            //   lastName: route.params.lastName,
-            //   contact: route.params.contact,
-            // },
+            useremail: email,
+            patientData: {
+              firstName: route.params.firstName,
+              lastName: route.params.lastName,
+              contact: route.params.contact,
+            },
           })
             .then(() => {
               setUploading(false);

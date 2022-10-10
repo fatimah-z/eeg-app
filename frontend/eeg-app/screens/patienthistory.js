@@ -17,8 +17,10 @@ import RadioForm, {
   RadioButtonInput,
   RadioButtonLabel,
 } from "react-native-simple-radio-button";
+import { firebase } from "../configauth";
 
 export default function App({ navigation, route }) {
+  const email = firebase.auth().currentUser.email;
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [contact, setContact] = useState("");
@@ -44,22 +46,19 @@ export default function App({ navigation, route }) {
     console.log(headIndex);
     console.log(parentalIndex);
     console.log(geneticIndex);
-    // console.log(route.params.sendEmail);
+    // console.log(route.params.getEmail);
     console.log(date);
 
-    // navigation.navigate("Home", {
-    //   screen: "ImportData",
-    //   params: {
-    //     firstName: firstName,
-    //     lastName: lastName,
-    //     contact: contact,
-    //     gender: gender,
-    //     head: head,
-    //     parental: parental,
-    //     genatic: genatic,
-    // email: route.params.sendEmail,
-    //   },
-    // });
+    navigation.navigate("importDataScreen", {
+      firstName: firstName,
+      lastName: lastName,
+      contact: contact,
+      gender: gender,
+      head: head,
+      parental: parental,
+      genatic: genatic,
+      email: email,
+    });
   };
   var radio_props = [
     { label: "Male", value: "male" },
@@ -418,7 +417,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 18,
-    marginTop:"25%",
+    marginTop: "25%",
 
     width: 400,
     color: "#000000",

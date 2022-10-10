@@ -11,7 +11,7 @@ import {
   ImageBackground,
 } from "react-native";
 import EEG from "../assets/images/EEGheadset.png";
-import Background from "../assets/images/background.png";
+import Background from "../assets/images/graph.png";
 import Loading from "../assets/images/loading.png";
 export default function App({ navigation }) {
   const onUpload = () => {
@@ -81,7 +81,7 @@ const Styles = StyleSheet.create({
   txt: {
     color: "#FFFFFF",
     fontSize: 17,
-     textDecorationLine: "underline",
+    textDecorationLine: "underline",
   },
   statusContainer: {
     flexDirection: "row",
@@ -89,10 +89,11 @@ const Styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: "5%",
   },
-  statusContainerConnect:{flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "center",
-  marginTop:"-3%"
+  statusContainerConnect: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "-3%",
   },
   uploadbtn: {
     flexDirection: "row",
