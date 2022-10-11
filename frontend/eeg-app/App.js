@@ -83,6 +83,16 @@ function App() {
           component={ImportData}
           options={{ headerStyle: { height: 0 } }}
         />
+         <ProfileStack.Screen
+          name="ViewAnalysis"
+          component={viewAnalysis}
+          options={{ headerStyle: { height: 0 } }}
+        />
+         <ProfileStack.Screen
+          name="ViewReport"
+          component={viewReport}
+          options={{ headerStyle: { height: 0 } }}
+        />
       </ProfileStack.Navigator>
     );
   }
@@ -169,8 +179,8 @@ function Temp (){
 export default () => {
   return (
     <NavigationContainer>
-      {/* <App /> */}
-      <Temp />
+      <App />
+      
     </NavigationContainer>
   );
 };

@@ -29,11 +29,41 @@ const ImportData = ({ route, navigation }) => {
   const [uploading, setUploading] = useState(false);
   const [uploaded, setuploaded] = useState("");
   const [visible, setVisible] = useState(false);
+  const [loading, setloading] = useState(false);
+  const [data,setData] = useState(0.0);
   useEffect(() => {
     setInterval(() => {
       setVisible(!visible);
     }, 2000);
   }, []);
+
+  const onAnalyze = async ()=>{
+    
+    setloading(true);
+      try{
+        const response = await fetch("http://192.168.43.137:4000/load", {
+          method: "GET",
+        });
+        const resp = await response.json();
+        console.log(resp.data);
+        setData(resp.data);
+        
+        // await response.json().then((resp)=>{
+        //   console.log(resp.data);
+        //   setData(resp.data);
+        // });
+        console.log(data);
+      }catch (error) {
+        
+      }
+      finally{
+        // if(data){
+
+          setloading(false);
+          navigation.navigate('ViewAnalysis',{resp_data:data});
+        // }
+      }
+    }
 
   const openGallery = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
@@ -140,6 +170,29 @@ const ImportData = ({ route, navigation }) => {
                 <Text style={Styles.txt}>{uploaded}</Text>
               </View>
             )}
+            <View>
+          {loading?(
+            <View>
+            <AnimatedLoader
+              visible={visible}
+              overlayColor="rgba(255,255,255,0.75)"
+              animationStyle={Styles.lottie}
+              speed={1}
+            >
+              <Text style={Styles.txt}>Loading</Text>
+            </AnimatedLoader>
+          </View>
+          ):(
+
+      
+        <View style={Styles.submitbtndiv}>
+          <TouchableOpacity style={Styles.loginBtn} onPress={onAnalyze}>
+            <Text style={Styles.loginText}>View Analysis</Text>
+          </TouchableOpacity>
+         
+        </View>
+          )}
+    </View>
           </View>
           <StatusBar style="auto" />
 
@@ -232,6 +285,7 @@ const Styles = StyleSheet.create({
     marginTop: "25%",
     width: 400,
     color: "#000000",
+    marginLeft:-16
   },
   uploadbtn: {
     flexDirection: "row",

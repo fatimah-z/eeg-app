@@ -161,6 +161,7 @@ const Styles = StyleSheet.create({
     marginTop: "25%",
     width: 400,
     color: "#000000",
+    marginLeft:-16
   },
   uploadbtn: {
     flexDirection: "row",
