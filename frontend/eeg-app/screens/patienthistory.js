@@ -163,7 +163,7 @@ export default function App({ navigation, route }) {
                   <TextInput
                     color="#000000"
                     placeholder="First Name"
-                    placeholderTextColor="#808080."
+                    placeholderTextColor="#808080"
                     onChangeText={(val) => setFirstName(val)}
                   />
                 </View>
@@ -171,7 +171,7 @@ export default function App({ navigation, route }) {
                   <TextInput
                     color="#000000"
                     placeholder="Last Name"
-                    placeholderTextColor="#808080."
+                    placeholderTextColor="#808080"
                     onChangeText={(val) => setLastName(val)}
                   />
                 </View>
