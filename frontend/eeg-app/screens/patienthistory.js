@@ -245,7 +245,7 @@ export default function App({ navigation, route }) {
                 </RadioForm>
               </View>
               <View style={styles.radio}>
-                <Text style={styles.radioHeading}>Head trauma</Text>
+                <Text style={styles.radioHeading}>Head Injury</Text>
                 <RadioForm formHorizontal={true}>
                   {radio_propshead.map((obj, i) => (
                     <RadioButton labelHorizontal={true} key={i}>
@@ -276,7 +276,7 @@ export default function App({ navigation, route }) {
                 </RadioForm>
               </View>
               <View style={styles.radio}>
-                <Text style={styles.radioHeading}>Prental injury</Text>
+                <Text style={styles.radioHeading}>Contacted Dengue</Text>
                 <RadioForm formHorizontal={true}>
                   {radio_propsgenetic.map((obj, i) => (
                     <RadioButton labelHorizontal={true} key={i}>
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
     marginTop: "25%",
-
+    marginLeft:-16,
     width: 400,
     color: "#000000",
   },

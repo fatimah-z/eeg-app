@@ -1,5 +1,5 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import Background from "../assets/images/background.png";
 import {
   StyleSheet,
   Text,
@@ -9,70 +9,42 @@ import {
   Button,
   TouchableOpacity,
   ImageBackground,
+  ScrollView
 } from "react-native";
-import AnimatedLoader from "react-native-animated-loader";
-// import DropDownPicker from "react-native-dropdown-picker";
-// import Record from "../assets/images/record.png";
-import Background from "../assets/background.jpg";
-// import Loading from "../assets/images/loading.png";
-import * as DocumentPicker from "expo-document-picker";
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { db, storage } from "../config";
-import { doc, setDoc, Timestamp } from "firebase/firestore";
-import { firebase } from "../configauth";
 
-const Profile = ({ route, navigation }) => {
-  const email = firebase.auth().currentUser.email;
-  const uploadDataBtn = () => {
-    navigation.navigate("patientHistoryScreen", {
-      getEmail: email,
-    });
-  };
-  return (
-    <View style={Styles.container}>
-      <ImageBackground
-        source={Background}
-        resizeMode="cover"
-        style={Styles.image}
-      >
-        <View>
-          <Text style={Styles.appnametxt}>Profile</Text>
+
+
+export default function App({navigation,route}){
+
+  // const[data,setdata]=useState(); 
+  const{data_}=route.params.resp_data;
+  useEffect(()=>{
+    // setdata(route.params.resp_data)
+    // setdata(navigation.getparam('resp_data'))
+  })
+  const handleonPress= ()=>{
+    navigation.navigate('ViewReport',{data_sent:route.params.resp_data});
+  }
+    return(
+        <View style={styles.outterdiv}>
+          <View style={styles.container}>
+          <ScrollView horizontal={true}>
+
+          <Image
+          source={
+            require("../assets/rawgraph.png")
+          }
+          />
+          </ScrollView>
+          <Text style={styles.txt}>EEG snapshot</Text>
+          <TouchableOpacity style={styles.loginBtn}>
+            <Text style={styles.loginText} onPress={handleonPress}>View Report</Text>
+          </TouchableOpacity>
+          </View>
         </View>
-        <View style={Styles.box}>
-          <View>
-            <Text style={Styles.text}>Welcome </Text>
-          </View>
-          {/* <View> */}
-          {/* <Text style={Styles.txt}>{route.params.sendEmail}</Text>
-          </View> */}
-
-          <View>
-            <View style={Styles.submitbtndiv}>
-              <TouchableOpacity
-                style={Styles.loginBtn}
-                onPress={() => uploadDataBtn()}
-              >
-                <Text style={Styles.loginText}>Upload Data</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View>
-            <View style={Styles.uploadbtndiv}>
-              <TouchableOpacity style={Styles.loginBtn}>
-                <Text style={Styles.loginText}>Record EEG Data</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <StatusBar style="auto" />
-
-          {/* another test line */}
-        </View>
-      </ImageBackground>
-    </View>
-  );
-};
-export default Profile;
-const Styles = StyleSheet.create({
+    );
+}
+const styles = StyleSheet.create({
   loginBtn: {
     width: "80%",
     borderRadius: 25,
@@ -104,12 +76,6 @@ const Styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
-  uploadbtndiv: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: "18%",
-  },
   image: {
     height: "100%",
     width: "100%",
@@ -117,6 +83,10 @@ const Styles = StyleSheet.create({
   lottie: {
     width: 100,
     height: 100,
+  },
+  outterdiv: {
+    backgroundColor: "#FCF1FB`",
+    height: "100%",
   },
   container: {
     backgroundColor: "#FFFFFF",
@@ -132,8 +102,7 @@ const Styles = StyleSheet.create({
   },
   txt: {
     fontWeight: "bold",
-    marginBottom: "33%",
-    fontSize: 18,
+    marginBottom: "3%",
   },
   statusContainer: {
     flexDirection: "row",
@@ -161,7 +130,6 @@ const Styles = StyleSheet.create({
     marginTop: "25%",
     width: 400,
     color: "#000000",
-    marginLeft:-16
   },
   uploadbtn: {
     flexDirection: "row",
@@ -185,8 +153,11 @@ const Styles = StyleSheet.create({
     // width: "50%",
   },
   text: {
+    fontWeight: "bold",
     marginBottom: "3%",
-    fontSize: 28,
+    borderBottomWidth: 3,
+    borderBottomColor: "#000000",
+    fontSize: 17,
   },
   uploadimg: { width: "80%", height: "200%", marginTop: "25%" },
   uploadimgdiv: {
@@ -202,4 +173,5 @@ const Styles = StyleSheet.create({
   selectfiles: {
     borderBottomWidth: 2,
   },
+  eegdataimg: { width: "100%", height: "300%", marginTop: "24%" },
 });

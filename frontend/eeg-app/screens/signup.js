@@ -111,7 +111,7 @@ const Registeration = ({ navigation }) => {
             />
           </View>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("loginScreen")} >
             <Text style={styles.forgot_button}>Already Registered?</Text>
           </TouchableOpacity>
 

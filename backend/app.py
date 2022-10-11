@@ -1,5 +1,6 @@
 import os
 import os.path as op
+
 import subprocess
 from turtle import mode
 from matplotlib.font_manager import json_dump
@@ -12,7 +13,7 @@ from flask import Flask, jsonify, send_file,stream_with_context
 from flask_cors import CORS
 from dotenv import load_dotenv
 from scipy import stats
-
+from model_files import preprocess
 
 load_dotenv()
 
@@ -98,10 +99,10 @@ def getEEG():
    
 @app.route('/load', methods=['GET'])
 def load_model():
-    subprocess.call(['python','C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/preprocess.py'])
-    return jsonify(
-'hello'
-    )
+    conf = preprocess.seiz_len/ preprocess.total_length
+    conf=float("{:.2f}".format(conf))
+    subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/preprocess.py'])
+    return jsonify({'data':conf})
 
 
 if __name__ == "__main__":
