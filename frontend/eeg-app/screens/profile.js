@@ -19,64 +19,13 @@ import * as DocumentPicker from "expo-document-picker";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "../config";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { firebase } from "../configauth";
 
-const ImportData = ({ route, navigation }) => {
-  const [selectedImage, setselectedImage] = useState(false);
-  const [selectedFileName, setselectedFileName] = useState("");
-  const [blobFile, setBlobFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploaded, setuploaded] = useState("");
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    setInterval(() => {
-      setVisible(!visible);
-    }, 2000);
-  }, []);
-
-  const openGallery = async () => {
-    let result = await DocumentPicker.getDocumentAsync({});
-
-    if (!result.cancelled) {
-      setselectedImage(true);
-      setselectedFileName(result.name);
-      const r = await fetch(result.uri);
-      const b = await r.blob(); // blob is the format in which we upload files
-      setBlobFile(b);
-    }
-  };
-  const uploadFile = (blobFile) => {
-    setUploading(true);
-    if (!blobFile) return;
-
-    const sotrageRef = ref(storage, `testFiles/${selectedFileName}`); // ye line miss thi
-
-    uploadBytesResumable(sotrageRef, blobFile).then((snapshot) => {
-      getDownloadURL(snapshot.ref)
-        .then((downloadURL) => {
-          setDoc(doc(db, "eegFiles", selectedFileName), {
-            fileDownloadURL: downloadURL,
-            name: selectedFileName,
-            uploadedAt: Timestamp.fromDate(new Date()),
-            // useremail: route.params.email,
-            // patientData: {
-            //   firstName: route.params.firstName,
-            //   lastName: route.params.lastName,
-            //   contact: route.params.contact,
-            // },
-          })
-            .then(() => {
-              setUploading(false);
-              setuploaded("File Uploaded");
-              return downloadURL;
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-          setUploading(false);
-        });
+const Profile = ({ route, navigation }) => {
+  const email = firebase.auth().currentUser.email;
+  const uploadDataBtn = () => {
+    navigation.navigate("patientHistoryScreen", {
+      getEmail: email,
     });
   };
   return (
@@ -91,21 +40,21 @@ const ImportData = ({ route, navigation }) => {
         </View>
         <View style={Styles.box}>
           <View>
-            <Text style={Styles.text}>Welcome</Text>
+            <Text style={Styles.text}>Welcome </Text>
           </View>
+          {/* <View> */}
+          {/* <Text style={Styles.txt}>{route.params.sendEmail}</Text>
+          </View> */}
 
           <View>
             <View style={Styles.submitbtndiv}>
-              <TouchableOpacity style={Styles.loginBtn}>
+              <TouchableOpacity
+                style={Styles.loginBtn}
+                onPress={() => uploadDataBtn()}
+              >
                 <Text style={Styles.loginText}>Upload Data</Text>
               </TouchableOpacity>
             </View>
-
-            {selectedImage ? (
-              <View style={Styles.row}>
-                <Text style={Styles.txt}>{selectedFileName}</Text>
-              </View>
-            ) : null}
           </View>
           <View>
             <View style={Styles.uploadbtndiv}>
@@ -113,23 +62,6 @@ const ImportData = ({ route, navigation }) => {
                 <Text style={Styles.loginText}>Record EEG Data</Text>
               </TouchableOpacity>
             </View>
-
-            {uploading ? (
-              <View>
-                <AnimatedLoader
-                  visible={visible}
-                  overlayColor="rgba(255,255,255,0.75)"
-                  animationStyle={Styles.lottie}
-                  speed={1}
-                >
-                  <Text style={Styles.txt}>File Uploading</Text>
-                </AnimatedLoader>
-              </View>
-            ) : (
-              <View style={Styles.row}>
-                <Text style={Styles.txt}>{uploaded}</Text>
-              </View>
-            )}
           </View>
           <StatusBar style="auto" />
 
@@ -139,7 +71,7 @@ const ImportData = ({ route, navigation }) => {
     </View>
   );
 };
-export default ImportData;
+export default Profile;
 const Styles = StyleSheet.create({
   loginBtn: {
     width: "80%",
@@ -171,13 +103,12 @@ const Styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    
   },
-  uploadbtndiv:{
+  uploadbtndiv: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    marginTop:"18%"
+    marginTop: "18%",
   },
   image: {
     height: "100%",
@@ -201,7 +132,8 @@ const Styles = StyleSheet.create({
   },
   txt: {
     fontWeight: "bold",
-    marginBottom: "3%",
+    marginBottom: "33%",
+    fontSize: 18,
   },
   statusContainer: {
     flexDirection: "row",
@@ -252,8 +184,8 @@ const Styles = StyleSheet.create({
     // width: "50%",
   },
   text: {
-    marginBottom: "33%",
-    fontSize: 30,
+    marginBottom: "3%",
+    fontSize: 28,
   },
   uploadimg: { width: "80%", height: "200%", marginTop: "25%" },
   uploadimgdiv: {

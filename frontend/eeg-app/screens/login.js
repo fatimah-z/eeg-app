@@ -11,21 +11,17 @@ import {
   ImageBackground,
 } from "react-native";
 import { firebase } from "../configauth";
-import Background from "../assets/images/background.png";
+import Background from "../assets/login.jpg";
 
 import ImportData from "./importeegdata";
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const loginUser = async (email, password) => {
+  const loginUser = async (email, password, username) => {
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password);
-      console.log(email);
-
-      navigation.navigate("PatientHistory", {
-        sendEmail: email,
-      });
     } catch (error) {
       alert(error.message);
     }
@@ -33,45 +29,56 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.outterdiv}>
-      <View style={styles.namediv}>
-        <Text style={styles.appnametxt}>WELCOME TO NEUROSCAN</Text>
-      </View>
+      <ImageBackground
+        source={Background}
+        resizeMode="cover"
+        style={styles.image}
+      >
+        <View style={styles.div}>
+          <View style={styles.namediv}>
+            <Text style={styles.appnametxt}>NEUROSCAN</Text>
+          </View>
 
-      <View style={styles.container}>
-        <StatusBar style="auto" />
+          <View style={styles.container}>
+            <StatusBar style="auto" />
+            
 
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Email"
-            placeholderTextColor="#808080"
-            onChangeText={(val) => setEmail(val)}
-          />
+            <View style={styles.inputView}>
+              <TextInput
+                style={styles.TextInput}
+                placeholder="Email"
+                placeholderTextColor="#808080"
+                onChangeText={(val) => setEmail(val)}
+              />
+            </View>
+
+            <View style={styles.inputView}>
+              <TextInput
+                style={styles.TextInput}
+                placeholder="Password"
+                placeholderTextColor="#808080"
+                secureTextEntry={true}
+                onChangeText={(password) => setPassword(password)}
+              />
+            </View>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Registeration")}
+            >
+              <Text style={styles.forgot_button}>Signup</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text style={styles.forgot_button}>Forgot Password?</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.loginBtn}
+              onPress={() => loginUser(email, password, username)}
+            >
+              <Text style={styles.loginText}>Login</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Password"
-            placeholderTextColor="#808080"
-            secureTextEntry={true}
-            onChangeText={(password) => setPassword(password)}
-          />
-        </View>
-
-        <TouchableOpacity onPress={() => navigation.navigate("Registeration")}>
-          <Text style={styles.forgot_button}>Signup</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.forgot_button}>Forgot Password?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.loginBtn}
-          onPress={() => loginUser(email, password)}
-        >
-          <Text style={styles.loginText}>Login</Text>
-        </TouchableOpacity>
-      </View>
+      </ImageBackground>
     </View>
   );
 };
@@ -80,8 +87,8 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
-    marginBottom: 60,
+    marginTop: 60,
+    marginBottom: 100,
   },
 
   inputView: {
@@ -95,7 +102,7 @@ const styles = StyleSheet.create({
     height: 50,
     flex: 1,
     padding: 10,
-    marginLeft: 10,
+
     borderColor: "#000000",
     borderBottomWidth: 1,
     color: "#000000",
@@ -112,18 +119,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     height: "100%",
+    width: "100%",
   },
   appnametxt: {
     textAlign: "center",
-
     fontSize: 18,
-    marginTop: 0,
-    width: 200,
 
-    color: "#000080",
+    width: 300,
+    fontWeight: "bold",
+    color: "#000000",
     marginTop: 30,
-    borderColor: "#000080",
-    borderWidth: 3,
   },
 
   loginBtn: {
@@ -133,8 +138,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
-    backgroundColor: "#000080",
+    backgroundColor: "#81E3CD",
   },
+  div: {},
 
   namediv: {
     alignItems: "center",
@@ -147,6 +153,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   loginText: {
-    color: "#FFFFFF",
+    color: "#000000",
+    fontWeight: "bold",
   },
 });

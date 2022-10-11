@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React, { useState, useEffect } from "react";
 import { firebase } from "./configauth";
 import Login from "./screens/login";
-import Registeration from "./screens/signup";
+import Signup from "./screens/signup";
 import Import from "./screens/importeegdata";
 import ImportData from "./screens/importeegdata";
 import PatientHistory from "./screens/patienthistory";
@@ -13,9 +13,15 @@ import SelectAnalysis from './screens/selectAnalyze';
 import viewAnalysis from './screens/visualAnalysis'
 import viewReport from './screens/Report';
 
+import connect from "./screens/connectheadset";
+import chatBot from "./screens/chatBot";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const ProfileStack = createStackNavigator();
+const LoggedOutStack = createStackNavigator();
+
 function App() {
   const [Initializing, setInitializing] = useState(true);
   const [User, setUser] = useState();
@@ -43,6 +49,44 @@ function App() {
   //     </Tab.Navigator>
   //   );
   // }
+  function LoggedOutScreens() {
+    return (
+      <LoggedOutStack.Navigator>
+        <LoggedOutStack.Screen
+          name="loginScreen"
+          component={Login}
+          options={{ headerStyle: { height: 0 } }}
+        />
+        <LoggedOutStack.Screen
+          name="signupScreen"
+          component={Signup}
+          options={{ headerStyle: { height: 0 } }}
+        />
+      </LoggedOutStack.Navigator>
+    );
+  }
+  function ProfileStackScreens() {
+    return (
+      <ProfileStack.Navigator>
+        <ProfileStack.Screen
+          name="profileScreen"
+          component={Profile}
+          options={{ headerStyle: { height: 0 } }}
+        />
+        <ProfileStack.Screen
+          name="patientHistoryScreen"
+          component={PatientHistory}
+          options={{ headerStyle: { height: 0 } }}
+        />
+        <ProfileStack.Screen
+          name="importDataScreen"
+          component={ImportData}
+          options={{ headerStyle: { height: 0 } }}
+        />
+      </ProfileStack.Navigator>
+    );
+  }
+
   function onAuthStateChange(user) {
     setUser(user);
     if (Initializing) setInitializing(false);
@@ -51,90 +95,36 @@ function App() {
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChange);
     return subscriber;
   }, []);
-  if (Initializing) return null;
-  if (!User) {
-    return (
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            headerTitle: "Profile",
-            headerStyle: {
-              backgroundColor: "#DAF3F2",
-              height: 0,
-            },
-          }}
-        ></Stack.Screen>
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            headerTitle: "Login",
-            headerStyle: {
-              backgroundColor: "#DAF3F2",
-              height: 0,
-            },
-            headerTitleStyle: {
-              color: "#000000",
-            },
-          }}
-        />
-          <Stack.Screen
-            name="PatientHistory"
-            component={PatientHistory}
-            options={{
-              headerTitle: "PatientHistory",
-              headerStyle: {
-                backgroundColor: "#DAF3F2",
-                height: 0,
-              },
-            }}
-          ></Stack.Screen>
-        <Stack.Screen
-          name="Registeration"
-          component={Registeration}
-          options={{
-            headerTitle: "Registeration",
-            headerStyle: {
-              backgroundColor: "#3EB489",
-            },
-          }}
-        />
-      </Stack.Navigator>
-    );
-  }
+
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{
-          headerTitle: "Login",
-          headerStyle: {
-            backgroundColor: "#3EB489",
-          },
-        }}
-      />
-      <Stack.Screen
-        name="ImportData"
-        component={ImportData}
-        options={{
-          headerTitle: "ImportData",
-          headerStyle: {
-            backgroundColor: "#DAF3F2",
-            height: 0,
-          },
-        }}
-      ></Stack.Screen>
-      {/* <Stack.Screen
-        name="Home"
-        component={Home}
-        options={{
-          headerShown: false,
-        }}
-      /> */}
-    </Stack.Navigator>
+    <>
+      {User ? (
+        <Tab.Navigator>
+          <Tab.Screen
+            name="Profile"
+            component={ProfileStackScreens}
+            options={{
+              headerStyle: { height: 0 },
+              tabBarIcon: () => (
+                <Icon name="person-circle-sharp" size={30} color="#81E3CD" />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="ChatBot"
+            component={chatBot}
+            options={{
+              headerStyle: { height: 0 },
+              tabBarIcon: () => (
+                <Icon name="chatbubbles-sharp" size={30} color="#81E3CD" />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      ) : (
+        <LoggedOutScreens />
+      )}
+    </>
   );
 }
 function Temp (){
@@ -184,4 +174,3 @@ export default () => {
     </NavigationContainer>
   );
 };
-
