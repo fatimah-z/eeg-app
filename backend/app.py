@@ -99,9 +99,9 @@ def getEEG():
    
 @app.route('/load', methods=['GET'])
 def load_model():
+    subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/preprocess.py'])
     conf = preprocess.seiz_len/ preprocess.total_length
     conf=float("{:.2f}".format(conf))
-    subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/preprocess.py'])
     return jsonify({'data':conf})
 
 

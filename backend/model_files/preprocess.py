@@ -8,14 +8,14 @@ Original file is located at
 """
 
 
-# Commented out IPython magic to ensure Python compatibility.
+
 import re
 from getpass import getpass
 import pyedflib
 from collections import Counter
 from pywt import swt
 import re
-import pandas as pd     # dataframes
+import pandas as pd     
 from tqdm import tqdm_notebook as tqdm
 from getpass import getpass
 from scipy.io import loadmat
@@ -125,6 +125,8 @@ channel_keeps = ch_list1
 regex = re.compile('30|PHOTIC|EKG|PG')
 channel_keeps = [i for i in channel_keeps if not regex.search(i)]
 raw_data, freq = data_load('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00003306_s001_t001.edf', channel_keeps)
+# 
+# raw_data, freq = data_load('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00001984_s001_t001.edf', channel_keeps)
 # print(raw_data.shape)
 # print(raw_data.columns)
 # display(raw_data)
@@ -155,6 +157,7 @@ def create_events(file_name, df, code = None):
 
 # raw_events = create_events(DOWNLOAD_DIR+'/'+file_ID+'.tse', raw_data)
 raw_events = create_events('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00003306_s001_t001.tse', raw_data)
+# raw_events = create_events('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00001984_s001_t001.tse', raw_data)
 # print(raw_events )
 
 def window_y(events, window_size, overlap, target=None, baseline=None):

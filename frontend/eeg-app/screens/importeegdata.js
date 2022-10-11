@@ -30,16 +30,20 @@ const ImportData = ({ route, navigation }) => {
   const [uploaded, setuploaded] = useState("");
   const [visible, setVisible] = useState(false);
   const [loading, setloading] = useState(false);
-  const [data,setData] = useState(0.0);
+  const [data,setData] = useState();
   useEffect(() => {
     setInterval(() => {
       setVisible(!visible);
     }, 2000);
-  }, []);
+    if(data){
+        setloading(false);
+        navigation.navigate('ViewAnalysis',{resp_data:data});
+      }
+  }, [data]);
 
   const onAnalyze = async ()=>{
     
-    setloading(true);
+      setloading(true);
       try{
         const response = await fetch("http://192.168.43.137:4000/load", {
           method: "GET",
@@ -59,8 +63,8 @@ const ImportData = ({ route, navigation }) => {
       finally{
         // if(data){
 
-          setloading(false);
-          navigation.navigate('ViewAnalysis',{resp_data:data});
+          // setloading(false);
+          // navigation.navigate('ViewAnalysis',{resp_data:data});
         // }
       }
     }
@@ -80,7 +84,7 @@ const ImportData = ({ route, navigation }) => {
     setUploading(true);
     if (!blobFile) return;
 
-    const sotrageRef = ref(storage, `testFiles/${selectedFileName}`); // ye line miss thi
+    const sotrageRef = ref(storage, `testFiles/${selectedFileName}`); 
 
     uploadBytesResumable(sotrageRef, blobFile).then((snapshot) => {
       getDownloadURL(snapshot.ref)

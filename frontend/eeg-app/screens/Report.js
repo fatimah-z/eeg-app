@@ -60,7 +60,7 @@ import {
             <Text style={styles.txt}>Seizure Window 4</Text>
             </View>
             <View style={styles.txtbox}>
-            <Text style={styles.txt}>Seizure Confidence:{route.params.data_sent}</Text>
+            <Text style={styles.txt}>Seizure Percentage:{route.params.data_sent}</Text>
             </View>
            </ScrollView>
         </View>

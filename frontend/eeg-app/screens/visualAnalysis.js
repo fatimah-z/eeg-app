@@ -12,8 +12,6 @@ import {
   ScrollView
 } from "react-native";
 
-
-
 export default function App({navigation,route}){
 
   // const[data,setdata]=useState(); 
