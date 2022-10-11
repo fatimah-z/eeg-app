@@ -55,7 +55,7 @@ with h5py.File('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/TUH
     # print(element)
     # np.append(ch_list1,element.decode('utf-8'),axis=)
     ch_list1.append(element.decode('utf-8'))
-  print(ch_list1)
+  # print(ch_list1)
 
 def data_load(data_file, selected_channels=[]):
 
@@ -65,7 +65,7 @@ def data_load(data_file, selected_channels=[]):
 
         # get the names of the signals
         channel_names = f.getSignalLabels()
-        print('channel_names',channel_names)
+        # print('channel_names',channel_names)
         # get the sampling frequencies of each signal
         channel_freq = f.getSampleFrequencies()
         
@@ -155,7 +155,7 @@ def create_events(file_name, df, code = None):
 
 # raw_events = create_events(DOWNLOAD_DIR+'/'+file_ID+'.tse', raw_data)
 raw_events = create_events('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00003306_s001_t001.tse', raw_data)
-print(raw_events )
+# print(raw_events )
 
 def window_y(events, window_size, overlap, target=None, baseline=None):
     
@@ -230,7 +230,7 @@ def window(a, w, o, copy = False):
 def window_x(data, window_size, overlap):
     
   for i, column in enumerate(data.columns):
-    print('i,col',i,column)
+    # print('i,col',i,column)
 
     # window the data so each row is another epoch
     channel_windowed = window(data[column], w = window_size, o = overlap, copy = True)
@@ -246,17 +246,17 @@ def window_x(data, window_size, overlap):
 # print(raw_data.values)
 # print(raw_events.values)
 down_x, down_y, down_freq = downsample(raw_data.values, raw_events.values, freq)
-print('down_x',down_x.shape)
-print('down_y',down_y)
-print('down_x',down_freq)
+# print('down_x',down_x.shape)
+# print('down_y',down_y)
+# print('down_x',down_freq)
 
 window_size = 256*2
 overlap = 256
 
 b, a = signal.butter(4, [1/(down_freq/2), 30/(down_freq/2)], 'bandpass', analog=False)
-print('b',b)
-print('a',a)
-print('down_x.T',down_x.T)
+# print('b',b)
+# print('a',a)
+# print('down_x.T',down_x.T)
 filt_data = signal.filtfilt(b, a, down_x.T).T
 # print(filt_data.shape)
 # display(filt_data)
@@ -307,12 +307,15 @@ plt.plot(raw_data.index.values,scaled_data)
 plt.savefig('scaled_graph')
 plt.clf()
 
+#-----------h5 Model File-----------------------
 model = tf.keras.models.load_model("C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/CNN1D_Model.h5")
 pr = model.predict(data_x)
 labels = (pr > 0.5).astype(np.int)
-print(labels)
-print(labels.size)
-print(np.count_nonzero(labels))
+#------------------------------------------------
+
+# print(labels)
+# print(labels.size)
+# print(np.count_nonzero(labels))
 
 def create_model( flatten=False):
   clear_session()
@@ -356,9 +359,9 @@ model2 = create_model()
 model2.load_weights("C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/CNN1D_Model.ckpt")
 pr2= model2.predict(data_x)
 labels2 = (pr2 > 0.5).astype(np.int)
-print(labels2)
-print(labels2.size)
-print(np.count_nonzero(labels2))
+# print(labels2)
+# print(labels2.size)
+# print(np.count_nonzero(labels2))
 zeros=[]
 nonzeros=[]
 for i in range(len(labels2)):
@@ -369,5 +372,23 @@ for i in range(len(labels2)):
 
 index_nonzero= nonzeros[0]
 plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
-plt.savefig('nonzero')
+plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep1')
 plt.clf()
+
+index_nonzero= nonzeros[1]
+plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
+plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep2')
+plt.clf()
+
+index_nonzero= nonzeros[2]
+plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
+plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep3')
+plt.clf()
+
+index_nonzero= nonzeros[4]
+plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
+plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep4')
+plt.clf()
+
+total_length = len(zeros)
+seiz_len = len(nonzeros)

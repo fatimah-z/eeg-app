@@ -9,6 +9,10 @@ import Import from "./screens/importeegdata";
 import ImportData from "./screens/importeegdata";
 import PatientHistory from "./screens/patienthistory";
 import Profile from "./screens/profile";
+import SelectAnalysis from './screens/selectAnalyze';
+import viewAnalysis from './screens/visualAnalysis'
+import viewReport from './screens/Report';
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -133,10 +137,50 @@ function App() {
     </Stack.Navigator>
   );
 }
+function Temp (){
+  return(
+    <Stack.Navigator>
+      <Stack.Screen
+          name="SelectAnalysis"
+          component={SelectAnalysis}
+          options={{
+            headerTitle: "Select",
+            headerStyle: {
+              backgroundColor: "#DAF3F2",
+              height: 0,
+            },
+          }}
+        ></Stack.Screen>
+      <Stack.Screen
+          name="ViewAnalysis"
+          component={viewAnalysis}
+          options={{
+            headerTitle: "Select",
+            headerStyle: {
+              backgroundColor: "#DAF3F2",
+              height: 0,
+            },
+          }}
+        ></Stack.Screen>
+        <Stack.Screen
+          name="ViewReport"
+          component={viewReport}
+          options={{
+            headerTitle: "Select",
+            headerStyle: {
+              backgroundColor: "#DAF3F2",
+              height: 0,
+            },
+          }}
+        ></Stack.Screen>
+    </Stack.Navigator>
+  );
+}
 export default () => {
   return (
     <NavigationContainer>
-      <App />
+      {/* <App /> */}
+      <Temp />
     </NavigationContainer>
   );
 };
