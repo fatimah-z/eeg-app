@@ -36,19 +36,12 @@ const Login = ({ navigation }) => {
       >
         <View style={styles.div}>
           <View style={styles.namediv}>
-            <Text style={styles.appnametxt}>WELCOME TO NEUROSCAN</Text>
+            <Text style={styles.appnametxt}>NEUROSCAN</Text>
           </View>
 
           <View style={styles.container}>
             <StatusBar style="auto" />
-            <View style={styles.inputView}>
-              <TextInput
-                style={styles.TextInput}
-                placeholder="Username"
-                placeholderTextColor="#808080"
-                onChangeText={(val) => setUsername(val)}
-              />
-            </View>
+            
 
             <View style={styles.inputView}>
               <TextInput

@@ -11,6 +11,7 @@ import PatientHistory from "./screens/patienthistory";
 import Profile from "./screens/profile";
 import connect from "./screens/connectheadset";
 import chatBot from "./screens/chatBot";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,8 +48,16 @@ function App() {
   function LoggedOutScreens() {
     return (
       <LoggedOutStack.Navigator>
-        <LoggedOutStack.Screen name="loginScreen" component={Login} />
-        <LoggedOutStack.Screen name="signupScreen" component={Signup} />
+        <LoggedOutStack.Screen
+          name="loginScreen"
+          component={Login}
+          options={{ headerStyle: { height: 0 } }}
+        />
+        <LoggedOutStack.Screen
+          name="signupScreen"
+          component={Signup}
+          options={{ headerStyle: { height: 0 } }}
+        />
       </LoggedOutStack.Navigator>
     );
   }
@@ -58,13 +67,18 @@ function App() {
         <ProfileStack.Screen
           name="profileScreen"
           component={Profile}
-          options={{ tabBarLabel: "Connect!" }}
+          options={{ headerStyle: { height: 0 } }}
         />
         <ProfileStack.Screen
           name="patientHistoryScreen"
           component={PatientHistory}
+          options={{ headerStyle: { height: 0 } }}
         />
-        <ProfileStack.Screen name="importDataScreen" component={ImportData} />
+        <ProfileStack.Screen
+          name="importDataScreen"
+          component={ImportData}
+          options={{ headerStyle: { height: 0 } }}
+        />
       </ProfileStack.Navigator>
     );
   }
@@ -77,110 +91,31 @@ function App() {
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChange);
     return subscriber;
   }, []);
-  // if (Initializing) return null;
-  // if (!User) {
-  //   return (
-  //     <Stack.Navigator>
-  //       <Stack.Screen
-  //         name="chatBot"
-  //         component={chatBot}
-  //         options={{
-  //           headerTitle: "chatBot",
-  //           headerStyle: {
-  //             backgroundColor: "#DAF3F2",
-  //             height: 0,
-  //           },
-  //           headerTitleStyle: {
-  //             color: "#000000",
-  //           },
-  //         }}
-  //       />
-  //       <Stack.Screen
-  //         name="Login"
-  //         component={Login}
-  //         options={{
-  //           headerTitle: "Login",
-  //           headerStyle: {
-  //             backgroundColor: "#DAF3F2",
-  //             height: 0,
-  //           },
-  //           headerTitleStyle: {
-  //             color: "#000000",
-  //           },
-  //         }}
-  //       />
-  //       <Stack.Screen
-  //         name="Registeration"
-  //         component={Registeration}
-  //         options={{
-  //           headerTitle: "Registeration",
-  //           headerStyle: {
-  //             backgroundColor: "#3EB489",
-  //             height: 0,
-  //           },
-  //         }}
-  //       />
-  //     </Stack.Navigator>
-  //   );
-  // }
+
   return (
-    // <Stack.Navigator>
-    //   <Stack.Screen
-    //     name="Login"
-    //     component={Login}
-    //     options={{
-    //       headerTitle: "Login",
-    //       headerStyle: {
-    //         backgroundColor: "#3EB489",
-    //       },
-    //     }}
-    //   />
-    //   <Stack.Screen
-    //     name="Profile"
-    //     component={Profile}
-    //     options={{
-    //       headerTitle: "Profile",
-    //       headerStyle: {
-    //         backgroundColor: "#DAF3F2",
-    //         height: 0,
-    //       },
-    //     }}
-    //   ></Stack.Screen>
-    //   <Stack.Screen
-    //     name="PatientHistory"
-    //     component={PatientHistory}
-    //     options={{
-    //       headerTitle: "PatientHistory",
-    //       headerStyle: {
-    //         backgroundColor: "#DAF3F2",
-    //         height: 0,
-    //       },
-    //     }}
-    //   ></Stack.Screen>
-    //   <Stack.Screen
-    //     name="ImportData"
-    //     component={ImportData}
-    //     options={{
-    //       headerTitle: "ImportData",
-    //       headerStyle: {
-    //         backgroundColor: "#DAF3F2",
-    //         height: 0,
-    //       },
-    //     }}
-    //   ></Stack.Screen>
-    //   {/* <Stack.Screen
-    //     name="Home"
-    //     component={Home}
-    //     options={{
-    //       headerShown: false,
-    //     }}
-    //   /> */}
-    // </Stack.Navigator>
     <>
       {User ? (
         <Tab.Navigator>
-          <Tab.Screen name="Connect" component={ProfileStackScreens} />
-          <Tab.Screen name="ChatBot" component={chatBot} />
+          <Tab.Screen
+            name="Profile"
+            component={ProfileStackScreens}
+            options={{
+              headerStyle: { height: 0 },
+              tabBarIcon: () => (
+                <Icon name="person-circle-sharp" size={30} color="#81E3CD" />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="ChatBot"
+            component={chatBot}
+            options={{
+              headerStyle: { height: 0 },
+              tabBarIcon: () => (
+                <Icon name="chatbubbles-sharp" size={30} color="#81E3CD" />
+              ),
+            }}
+          />
         </Tab.Navigator>
       ) : (
         <LoggedOutScreens />
