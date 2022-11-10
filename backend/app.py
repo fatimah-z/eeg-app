@@ -3,6 +3,7 @@ import os.path as op
 
 import subprocess
 from turtle import mode
+from urllib import request
 from matplotlib.font_manager import json_dump
 import numpy as np
 import mne
@@ -13,6 +14,7 @@ from flask import Flask, jsonify, send_file,stream_with_context
 from flask_cors import CORS
 from dotenv import load_dotenv
 from scipy import stats
+from flask import request
 from model_files import preprocess
 
 load_dotenv()
@@ -25,31 +27,31 @@ CORS(app)
 @app.route('/view', methods=['GET'])
 def getEEG():
     
-    raw = mne.io.read_raw_brainvision(RAW_BRAINVISION_PATH,misc='auto')
-    raw.load_data() 
+    # raw = mne.io.read_raw_brainvision(RAW_BRAINVISION_PATH,misc='auto')
+    # raw.load_data() 
      
-    epochs=mne.make_fixed_length_epochs(raw,duration=5,overlap=1)
-    array= epochs.get_data()
-    print(array)
+    # epochs=mne.make_fixed_length_epochs(raw,duration=5,overlap=1)
+    # array= epochs.get_data()
+    # print(array)
    
-    print(array.shape) #noofepochs, channels, length ofsignals (366,63,2500)                   
-    features=[]
-    features.append(np.mean(array,axis=-1))
-    features.append(np.std(array,axis=-1))
-    features.append(np.ptp(array, axis=-1))
-    features.append(np.var(array,axis=-1))
-    features.append(np.min(array,axis=-1))
-    features.append(np.max(array,axis=-1))
-    features.append(np.argmin(array, axis=-1))
-    features.append(np.argmax(array,axis=-1))
-    features.append(np.mean(array**2,axis=-1))
-    features.append(np.sqrt(np.mean(array**2,axis=-1)))
-    features.append(np.sum(np.abs(np.diff(array,axis=-1)),axis=-1))
-    features.append(stats.skew(array,axis=-1))
-    features.append(stats.kurtosis(array,axis=-1))
-    features=np.array(features)
+    # print(array.shape) #noofepochs, channels, length ofsignals (366,63,2500)                   
+    # features=[]
+    # features.append(np.mean(array,axis=-1))
+    # features.append(np.std(array,axis=-1))
+    # features.append(np.ptp(array, axis=-1))
+    # features.append(np.var(array,axis=-1))
+    # features.append(np.min(array,axis=-1))
+    # features.append(np.max(array,axis=-1))
+    # features.append(np.argmin(array, axis=-1))
+    # features.append(np.argmax(array,axis=-1))
+    # features.append(np.mean(array**2,axis=-1))
+    # features.append(np.sqrt(np.mean(array**2,axis=-1)))
+    # features.append(np.sum(np.abs(np.diff(array,axis=-1)),axis=-1))
+    # features.append(stats.skew(array,axis=-1))
+    # features.append(stats.kurtosis(array,axis=-1))
+    # features=np.array(features)
     
-    print(features.shape)
+    # print(features.shape)
     # raw.resample(256, npad="auto") 
     # raw.filter(1, 30, fir_design='firwin', picks=['eeg'])
     # raw.set_eeg_reference('average', projection=True).apply_proj()
@@ -79,14 +81,14 @@ def getEEG():
     #---------------------------------------------------------------------------------
 
     #--------------extracting data and time for all channels--------------------------
-    data,times = raw.get_data(return_times=True)
+    # data,times = raw.get_data(return_times=True)
     
-    arr1 =data.tolist()
-    arr2 = times.tolist()
-    list1={'arr1':arr1,'arr2':arr2}
-    fig1 = plt.figure()
-    plt.plot(times,data.T)
-    plt.savefig('graph.png')
+    # arr1 =data.tolist()
+    # arr2 = times.tolist()
+    # list1={'arr1':arr1,'arr2':arr2}
+    # fig1 = plt.figure()
+    # plt.plot(times,data.T)
+    # plt.savefig('graph.png')
     # mpld3.save_html(fig1,'graph.html')
     #writing to a file
     # with open('eegdata.json','w') as file1:
@@ -104,6 +106,10 @@ def load_model():
     conf=float("{:.2f}".format(conf))
     return jsonify({'data':conf})
 
+@app.route('/uploadFile',methods=['Post'] )
+def upload_file():
+    url = request.get_json('url',force=True)
+    return jsonify({'url': url})
 
 if __name__ == "__main__":
     app.run(HOST, port='4000',debug=True)

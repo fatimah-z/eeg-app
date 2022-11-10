@@ -65,7 +65,6 @@ export default function App({ navigation }) {
         method: "GET",
       });
       const resp = await response.json();
-      console.log("helloooooo");
       console.log(resp);
       setdata(resp);
       setfirstarr(resp.arr1);
