@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../config";
 import RadioForm, {
   RadioButton,
   RadioButtonInput,
@@ -19,11 +21,11 @@ import RadioForm, {
 } from "react-native-simple-radio-button";
 import { firebase } from "../configauth";
 import { ScrollView } from "react-native-gesture-handler";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function App({ navigation, route }) {
   const email = firebase.auth().currentUser.email;
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [gender, setGender] = useState("");
   const [head, setHead] = useState("");
@@ -33,11 +35,11 @@ export default function App({ navigation, route }) {
   const [headIndex, setHeadIndex] = useState(0);
   const [parentalIndex, setParentalIndex] = useState(0);
   const [geneticIndex, setGeneticIndex] = useState(0);
+  const [boolVal, setBoolval] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const onSubmit = () => {
-    console.log(firstName);
-    console.log(lastName);
+    console.log(name);
     console.log(contact);
     console.log(gender);
     console.log(head);
@@ -50,16 +52,31 @@ export default function App({ navigation, route }) {
     // console.log(route.params.getEmail);
     console.log(date);
 
-    navigation.navigate("importDataScreen", {
-      firstName: firstName,
-      lastName: lastName,
-      contact: contact,
-      gender: gender,
-      head: head,
-      parental: parental,
-      genatic: genatic,
-      email: email,
-    });
+    if (route.params.boolVar == true) {
+      console.log("hello");
+      setDoc(
+        doc(db, "eegFiles", "name12345"),
+        {
+          patientData: {
+            name: firstName,
+            lastName: lastName,
+            contact: contact,
+          },
+        },
+        { merge: true }
+      );
+      console.log("done");
+    } else {
+      navigation.navigate("importDataScreen", {
+        name: name,
+        contact: contact,
+        gender: gender,
+        head: head,
+        parental: parental,
+        genatic: genatic,
+        email: email,
+      });
+    }
   };
   var radio_props = [
     { label: "Male", value: "male" },
@@ -151,9 +168,10 @@ export default function App({ navigation, route }) {
         source={require("../assets/background.jpg")}
         style={{ width: "100%", height: "100%" }}
       >
-        <View>
-          <Text style={styles.appnametxt}>Patient History Form</Text>
+        <View style={styles.header}>
+          <Text style={{ fontSize: 20 }}>Patient History Form</Text>
         </View>
+
         <View style={styles.box}>
           <ScrollView>
             <View style={styles.container}>
@@ -162,17 +180,10 @@ export default function App({ navigation, route }) {
                 <View style={styles.namefields}>
                   <TextInput
                     color="#000000"
-                    placeholder="First Name"
+                    placeholder="Full Name"
+                    cursorColor="grey"
                     placeholderTextColor="#808080"
-                    onChangeText={(val) => setFirstName(val)}
-                  />
-                </View>
-                <View style={styles.namefields}>
-                  <TextInput
-                    color="#000000"
-                    placeholder="Last Name"
-                    placeholderTextColor="#808080"
-                    onChangeText={(val) => setLastName(val)}
+                    onChangeText={(val) => setName(val)}
                   />
                 </View>
               </View>
@@ -180,6 +191,7 @@ export default function App({ navigation, route }) {
                 <View style={styles.namefields}>
                   <TextInput
                     color="#000000"
+                    cursorColor="grey"
                     placeholder="Contact Number"
                     placeholderTextColor="#808080"
                     onChangeText={(val) => setContact(val)}
@@ -189,13 +201,14 @@ export default function App({ navigation, route }) {
 
               <View style={styles.inputView}>
                 <View style={styles.dropdowndiv}>
-                  <Text
-                    style={styles.DOB}
+                  <TouchableOpacity
                     onPress={() => setShowDatePicker(true)}
+                    style={styles.DOB}
                   >
-                    Select DOB
-                  </Text>
-                  <View marginRight={"-15%"} marginTop={"4.7%"}>
+                    <Text>Select DOB{"  "}</Text>
+                    <AntDesign name="calendar" size={20} color="black" />
+                  </TouchableOpacity>
+                  <View style={{ marginLeft: 10 }}>
                     {showDatePicker ? (
                       <DateTimePicker
                         value={date}
@@ -207,9 +220,7 @@ export default function App({ navigation, route }) {
                         on
                       />
                     ) : null}
-                    <Text onPress={() => setShowDatePicker(true)}>
-                      {date.toDateString()}
-                    </Text>
+                    <Text>{date?.toDateString()}</Text>
                   </View>
                 </View>
               </View>
@@ -227,8 +238,8 @@ export default function App({ navigation, route }) {
                         borderWidth={1}
                         buttonInnerColor={"#000"}
                         buttonOuterColor={"#000"}
-                        buttonSize={20}
-                        buttonOuterSize={30}
+                        buttonSize={15}
+                        buttonOuterSize={20}
                         buttonStyle={{}}
                         buttonWrapStyle={{ marginLeft: 10 }}
                       />
@@ -258,8 +269,8 @@ export default function App({ navigation, route }) {
                         borderWidth={1}
                         buttonInnerColor={"#000"}
                         buttonOuterColor={"#000"}
-                        buttonSize={20}
-                        buttonOuterSize={30}
+                        buttonSize={15}
+                        buttonOuterSize={20}
                         buttonStyle={{}}
                         buttonWrapStyle={{ marginLeft: 10 }}
                       />
@@ -289,8 +300,8 @@ export default function App({ navigation, route }) {
                         borderWidth={1}
                         buttonInnerColor={"#000"}
                         buttonOuterColor={"#000"}
-                        buttonSize={20}
-                        buttonOuterSize={30}
+                        buttonSize={15}
+                        buttonOuterSize={20}
                         buttonStyle={{}}
                         buttonWrapStyle={{ marginLeft: 10 }}
                       />
@@ -320,8 +331,8 @@ export default function App({ navigation, route }) {
                         borderWidth={1}
                         buttonInnerColor={"#000"}
                         buttonOuterColor={"#000"}
-                        buttonSize={20}
-                        buttonOuterSize={30}
+                        buttonSize={15}
+                        buttonOuterSize={20}
                         buttonStyle={{}}
                         buttonWrapStyle={{ marginLeft: 10 }}
                       />
@@ -356,11 +367,19 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 60,
   },
+  header: {
+    marginTop: 80,
+    marginHorizontal: 20,
+    height: "10%",
+    backgroundColor: "#b3b3b350",
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
   inputView: {
-    width: "70%",
     height: 45,
-    marginTop: "7%",
+    marginVertical: "7%",
     alignItems: "center",
   },
 
@@ -380,12 +399,12 @@ const styles = StyleSheet.create({
     // justifyContent: "center",
   },
   DOB: {
-    height: 50,
-    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "#ffffff80",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
     padding: 10,
-    marginLeft: "30%",
-    marginTop: "1%",
-
     color: "#000000",
   },
   submitbtndiv: {
@@ -395,12 +414,10 @@ const styles = StyleSheet.create({
   },
 
   radioHeading: {
-    height: 70,
-    padding: 10,
+    minHeight: 70,
     width: "25%",
     textAlign: "right",
     color: "#000000",
-    marginLeft: -15,
   },
 
   image: {
@@ -410,8 +427,8 @@ const styles = StyleSheet.create({
   },
   dropdowndiv: {
     flexDirection: "row",
-    width: "100%",
-    marginTop: "-3%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   dropdown: {
     width: "30%",
@@ -421,7 +438,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
     marginTop: "25%",
-    marginLeft:-16,
+    marginLeft: -16,
     width: 400,
     color: "#000000",
   },
@@ -429,50 +446,44 @@ const styles = StyleSheet.create({
   namefields: {
     height: 50,
     flex: 1,
-    padding: 10,
-    marginLeft: 10,
-    borderColor: "#000000",
+    padding: 5,
+    width: "60%",
+    borderColor: "grey",
     borderBottomWidth: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   loginBtn: {
     width: "80%",
-    borderRadius: 25,
+    borderRadius: 10,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: "13%",
-    backgroundColor: "#81E3CD",
+    backgroundColor: "#ffffff",
   },
   nameouttercontainer: {
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: "60%",
-
-    marginLeft: "17%",
   },
 
   outterdiv: {
     backgroundColor: "#FCF1FB`",
     height: "100%",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   loginText: {
-    color: "#000000",
     fontWeight: "bold",
   },
   box: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#b3b3b350",
     borderRadius: 15,
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    height: "70%",
+    height: "75%",
     margin: 20,
     marginTop: "5%",
     alignItems: "center",
     justifyContent: "center",
+    overflow: "scroll",
   },
 });
