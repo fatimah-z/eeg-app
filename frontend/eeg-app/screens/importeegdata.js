@@ -20,6 +20,8 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "../config";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { firebase } from "../configauth";
+import Tile from "../components/Tile";
+import { AntDesign } from "@expo/vector-icons";
 
 const ImportData = ({ route, navigation }) => {
   const email = firebase.auth().currentUser.email;
@@ -30,44 +32,40 @@ const ImportData = ({ route, navigation }) => {
   const [uploaded, setuploaded] = useState("");
   const [visible, setVisible] = useState(false);
   const [loading, setloading] = useState(false);
-  const [data,setData] = useState();
+  const [data, setData] = useState();
   useEffect(() => {
     setInterval(() => {
       setVisible(!visible);
     }, 2000);
-    if(data){
-        setloading(false);
-        navigation.navigate('ViewAnalysis',{resp_data:data});
-      }
+    if (data) {
+      setloading(false);
+      navigation.navigate("ViewAnalysis", { resp_data: data });
+    }
   }, [data]);
 
-  const onAnalyze = async ()=>{
-    
-      setloading(true);
-      try{
-        const response = await fetch("http://192.168.43.137:4000/load", {
-          method: "GET",
-        });
-        const resp = await response.json();
-        console.log(resp.data);
-        setData(resp.data);
-        
-        // await response.json().then((resp)=>{
-        //   console.log(resp.data);
-        //   setData(resp.data);
-        // });
-        console.log(data);
-      }catch (error) {
-        
-      }
-      finally{
-        // if(data){
+  const onAnalyze = async () => {
+    setloading(true);
+    try {
+      const response = await fetch("http://192.168.43.137:4000/load", {
+        method: "GET",
+      });
+      const resp = await response.json();
+      console.log(resp.data);
+      setData(resp.data);
 
-          // setloading(false);
-          // navigation.navigate('ViewAnalysis',{resp_data:data});
-        // }
-      }
+      // await response.json().then((resp)=>{
+      //   console.log(resp.data);
+      //   setData(resp.data);
+      // });
+      console.log(data);
+    } catch (error) {
+    } finally {
+      // if(data){
+      // setloading(false);
+      // navigation.navigate('ViewAnalysis',{resp_data:data});
+      // }
     }
+  };
 
   const openGallery = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
@@ -84,7 +82,7 @@ const ImportData = ({ route, navigation }) => {
     setUploading(true);
     if (!blobFile) return;
 
-    const sotrageRef = ref(storage, `testFiles/${selectedFileName}`); 
+    const sotrageRef = ref(storage, `testFiles/${selectedFileName}`);
 
     uploadBytesResumable(sotrageRef, blobFile).then((snapshot) => {
       getDownloadURL(snapshot.ref)
@@ -122,8 +120,8 @@ const ImportData = ({ route, navigation }) => {
         resizeMode="cover"
         style={Styles.image}
       >
-        <View>
-          <Text style={Styles.appnametxt}>Upload Data</Text>
+        <View style={Styles.header}>
+          <Text style={{ fontSize: 20 }}>Upload Data</Text>
         </View>
         <View style={Styles.box}>
           {/* <View style={Styles.uploadimgdiv}>
@@ -133,32 +131,45 @@ const ImportData = ({ route, navigation }) => {
           {/* Cetered this.. */}
 
           <View style={Styles.galleryContainer}>
-            <View style={Styles.row}>
-              <Text style={Styles.text}>Pick your file to upload</Text>
-            </View>
-            <View style={Styles.submitbtndiv}>
-              <TouchableOpacity style={Styles.loginBtn} onPress={openGallery}>
-                <Text style={Styles.loginText}>Open Gallery</Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={{ marginBottom: 10 }}>Pick your file to upload</Text>
+
+            <Tile
+              onPress={openGallery}
+              text="Open Gallery"
+              icon={<AntDesign name="addfile" size={24} color="black" />}
+            />
 
             {selectedImage ? (
-              <View style={Styles.row}>
+              <View style={{ ...Styles.row, marginTop: 10 }}>
                 <Text style={Styles.txt}>{selectedFileName}</Text>
               </View>
             ) : null}
           </View>
-          <View style={Styles.uploadContainer}>
-            <View style={Styles.row}>
-              <Text style={Styles.text}>Upload File</Text>
-            </View>
-            <View style={Styles.submitbtndiv}>
-              <TouchableOpacity style={Styles.loginBtn} onPress={uploadFile}>
-                <Text style={Styles.loginText}>Upload</Text>
-              </TouchableOpacity>
-            </View>
+          <TouchableOpacity
+            style={{ ...Styles.loginBtn, marginTop: 20 }}
+            onPress={uploadFile}
+          >
+            <Text style={Styles.loginText}>Upload</Text>
+          </TouchableOpacity>
 
-            {uploading ? (
+          {uploading ? (
+            <View>
+              <AnimatedLoader
+                visible={visible}
+                overlayColor="rgba(255,255,255,0.75)"
+                animationStyle={Styles.lottie}
+                speed={1}
+              >
+                <Text style={Styles.txt}>File Uploading</Text>
+              </AnimatedLoader>
+            </View>
+          ) : (
+            <View style={Styles.row}>
+              <Text style={Styles.txt}>{uploaded}</Text>
+            </View>
+          )}
+          <View>
+            {loading ? (
               <View>
                 <AnimatedLoader
                   visible={visible}
@@ -166,38 +177,16 @@ const ImportData = ({ route, navigation }) => {
                   animationStyle={Styles.lottie}
                   speed={1}
                 >
-                  <Text style={Styles.txt}>File Uploading</Text>
+                  <Text style={Styles.txt}>Loading</Text>
                 </AnimatedLoader>
               </View>
             ) : (
-              <View style={Styles.row}>
-                <Text style={Styles.txt}>{uploaded}</Text>
-              </View>
+              <TouchableOpacity style={Styles.loginBtn} onPress={onAnalyze}>
+                <Text style={Styles.loginText}>View Analysis</Text>
+              </TouchableOpacity>
             )}
-            <View>
-          {loading?(
-            <View>
-            <AnimatedLoader
-              visible={visible}
-              overlayColor="rgba(255,255,255,0.75)"
-              animationStyle={Styles.lottie}
-              speed={1}
-            >
-              <Text style={Styles.txt}>Loading</Text>
-            </AnimatedLoader>
           </View>
-          ):(
 
-      
-        <View style={Styles.submitbtndiv}>
-          <TouchableOpacity style={Styles.loginBtn} onPress={onAnalyze}>
-            <Text style={Styles.loginText}>View Analysis</Text>
-          </TouchableOpacity>
-         
-        </View>
-          )}
-    </View>
-          </View>
           <StatusBar style="auto" />
 
           {/* another test line */}
@@ -208,15 +197,6 @@ const ImportData = ({ route, navigation }) => {
 };
 export default ImportData;
 const Styles = StyleSheet.create({
-  loginBtn: {
-    width: "80%",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-
-    backgroundColor: "#BB005E",
-  },
   loadingimg: {
     flexDirection: "row",
     alignItems: "center",
@@ -226,13 +206,12 @@ const Styles = StyleSheet.create({
     fontWeight: "bold",
   },
   loginBtn: {
-    width: "80%",
-    borderRadius: 25,
+    width: 200,
+    borderRadius: 10,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: "5%",
-    backgroundColor: "#81E3CD",
+    backgroundColor: "#ffffff",
   },
   submitbtndiv: {
     display: "flex",
@@ -269,18 +248,23 @@ const Styles = StyleSheet.create({
     justifyContent: "center",
   },
   box: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#b3b3b350",
     borderRadius: 15,
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
     height: "70%",
     margin: 20,
     marginTop: "5%",
     alignItems: "center",
     justifyContent: "center",
     overflow: "scroll",
+  },
+  header: {
+    marginTop: 100,
+    marginHorizontal: 20,
+    height: "10%",
+    backgroundColor: "#b3b3b350",
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
   },
   appnametxt: {
     textAlign: "center",
@@ -289,7 +273,7 @@ const Styles = StyleSheet.create({
     marginTop: "25%",
     width: 400,
     color: "#000000",
-    marginLeft:-16
+    marginLeft: -16,
   },
   uploadbtn: {
     flexDirection: "row",
@@ -299,10 +283,12 @@ const Styles = StyleSheet.create({
     marginBottom: "5%",
   },
   galleryContainer: {
-    marginTop: "-10%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 50,
   },
   uploadContainer: {
-    marginTop: "40%",
+    marginTop: 10,
   },
   row: {
     flexDirection: "row",
