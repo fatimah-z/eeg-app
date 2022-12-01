@@ -44,6 +44,9 @@ const Profile = ({ route, navigation }) => {
       getEmail: email,
     });
   };
+  const viewPatientBtn = () => {
+    navigation.navigate("viewPatient");
+  };
   return (
     <View style={Styles.container}>
       <ImageBackground
@@ -80,7 +83,7 @@ const Profile = ({ route, navigation }) => {
           </View>
           <View style={Styles.row}>
             <Tile
-              onPress={() => uploadDataBtn()}
+              onPress={() => viewPatientBtn()}
               text="View Patients"
               icon={<Ionicons name="people-outline" size={40} color="black" />}
             />

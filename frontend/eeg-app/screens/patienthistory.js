@@ -58,8 +58,8 @@ export default function App({ navigation, route }) {
         doc(db, "eegFiles", "name12345"),
         {
           patientData: {
-            name: firstName,
-            lastName: lastName,
+            name: name,
+
             contact: contact,
           },
         },
