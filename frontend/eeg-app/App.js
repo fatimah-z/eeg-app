@@ -8,8 +8,9 @@ import Signup from "./screens/signup";
 import ImportData from "./screens/importeegdata";
 import PatientHistory from "./screens/patienthistory";
 import Profile from "./screens/profile";
-import viewAnalysis from './screens/visualAnalysis'
-import viewReport from './screens/Report';
+import viewAnalysis from "./screens/visualAnalysis";
+import viewReport from "./screens/Report";
+import viewPatient from "./screens/viewpatient";
 import chatBot from "./screens/chatBot";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -70,6 +71,11 @@ function App() {
           options={{ headerStyle: { height: 0 } }}
         />
         <ProfileStack.Screen
+          name="viewPatient"
+          component={viewPatient}
+          options={{ headerStyle: { height: 0 } }}
+        />
+        <ProfileStack.Screen
           name="patientHistoryScreen"
           component={PatientHistory}
           options={{ headerStyle: { height: 0 } }}
@@ -79,12 +85,12 @@ function App() {
           component={ImportData}
           options={{ headerStyle: { height: 0 } }}
         />
-         <ProfileStack.Screen
+        <ProfileStack.Screen
           name="ViewAnalysis"
           component={viewAnalysis}
           options={{ headerStyle: { height: 0 } }}
         />
-         <ProfileStack.Screen
+        <ProfileStack.Screen
           name="ViewReport"
           component={viewReport}
           options={{ headerStyle: { height: 0 } }}
@@ -98,6 +104,9 @@ function App() {
     if (Initializing) setInitializing(false);
   }
   useEffect(() => {
+    if (firebase.auth().currentUser) {
+      setUser(firebase.auth().currentUser);
+    }
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChange);
     return subscriber;
   }, []);
@@ -137,7 +146,6 @@ export default () => {
   return (
     <NavigationContainer>
       <App />
-      
     </NavigationContainer>
   );
 };

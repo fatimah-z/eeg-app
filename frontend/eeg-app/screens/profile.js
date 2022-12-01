@@ -20,9 +20,25 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "../config";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { firebase } from "../configauth";
+import Tile from "../components/Tile";
+import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
 const Profile = ({ route, navigation }) => {
-  const email = firebase.auth().currentUser.email;
+  const email = firebase?.auth()?.currentUser?.email;
+  const [username, setUsername] = useState("");
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth()?.currentUser.uid)
+      .get()
+      .then((doc) => {
+        const data = doc.data();
+        if (data.username) {
+          setUsername(data.username);
+        }
+      });
+  }, []);
   const uploadDataBtn = () => {
     navigation.navigate("patientHistoryScreen", {
       getEmail: email,
@@ -35,18 +51,42 @@ const Profile = ({ route, navigation }) => {
         resizeMode="cover"
         style={Styles.image}
       >
-        <View>
-          <Text style={Styles.appnametxt}>Profile</Text>
+        <View style={Styles.header}>
+          <Text style={{ fontSize: 20 }}>
+            Welcome!
+            <Text> </Text>
+            <Text style={{ fontStyle: "italic" }}>
+              {username ? username : null}
+            </Text>
+          </Text>
         </View>
         <View style={Styles.box}>
-          <View>
-            <Text style={Styles.text}>Welcome </Text>
-          </View>
           {/* <View> */}
           {/* <Text style={Styles.txt}>{route.params.sendEmail}</Text>
           </View> */}
 
-          <View>
+          <View style={Styles.row}>
+            <Tile
+              onPress={() => uploadDataBtn()}
+              text="Upload Data"
+              icon={<Feather name="upload-cloud" size={40} color="black" />}
+            />
+            <Tile
+              icon={
+                <MaterialCommunityIcons name="brain" size={40} color="black" />
+              }
+              text="Record EEG Data"
+            />
+          </View>
+          <View style={Styles.row}>
+            <Tile
+              onPress={() => uploadDataBtn()}
+              text="View Patients"
+              icon={<Ionicons name="people-outline" size={40} color="black" />}
+            />
+          </View>
+
+          {/* <View>
             <View style={Styles.submitbtndiv}>
               <TouchableOpacity
                 style={Styles.loginBtn}
@@ -62,7 +102,7 @@ const Profile = ({ route, navigation }) => {
                 <Text style={Styles.loginText}>Record EEG Data</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </View> */}
           <StatusBar style="auto" />
 
           {/* another test line */}
@@ -113,6 +153,8 @@ const Styles = StyleSheet.create({
   image: {
     height: "100%",
     width: "100%",
+    display: "flex",
+    justifyContent: "center",
   },
   lottie: {
     width: 100,
@@ -120,6 +162,7 @@ const Styles = StyleSheet.create({
   },
   container: {
     backgroundColor: "#FFFFFF",
+    color: "grey",
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -141,18 +184,23 @@ const Styles = StyleSheet.create({
     justifyContent: "center",
   },
   box: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#b3b3b350",
     borderRadius: 15,
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
     height: "70%",
     margin: 20,
     marginTop: "5%",
     alignItems: "center",
     justifyContent: "center",
     overflow: "scroll",
+  },
+  header: {
+    marginTop: 50,
+    marginHorizontal: 20,
+    height: "10%",
+    backgroundColor: "#b3b3b350",
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
   },
   appnametxt: {
     textAlign: "center",
@@ -161,7 +209,7 @@ const Styles = StyleSheet.create({
     marginTop: "25%",
     width: 400,
     color: "#000000",
-    marginLeft:-16
+    marginLeft: -16,
   },
   uploadbtn: {
     flexDirection: "row",

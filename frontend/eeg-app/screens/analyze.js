@@ -61,7 +61,7 @@ export default function App({ navigation }) {
 
   const view = async () => {
     try {
-      const response = await fetch("http://192.168.100.95:4000/view", {
+      const response = await fetch("http://192.168.0.103:4000/view", {
         method: "GET",
       });
       const resp = await response.json();

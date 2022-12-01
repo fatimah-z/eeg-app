@@ -42,11 +42,14 @@ const Registeration = ({ navigation }) => {
               .collection("users")
               .doc(firebase.auth().currentUser.uid)
               .set({
-                firstname,
-                lastname,
+                id: firebase.auth().currentUser.uid,
+                username,
                 email,
+              })
+              .then(() => {
+                alert("Created");
               });
-            navigation.navigate("Login", { id: "1" });
+            // navigation.navigate("Login", { id: "1" });
           })
           .catch((error) => {
             alert(error.message);
@@ -76,21 +79,20 @@ const Registeration = ({ navigation }) => {
                 color="#FFFFFF"
                 placeholder="Username"
                 placeholderTextColor="#808080"
-                onChangeText={(email) => setEmail(email)}
+                onChangeText={(username) => setUsername(username)}
                 style={styles.TextInput}
               />
             </View>
           </View>
-            <View style={styles.inputView}>
-              <TextInput
-                color="#FFFFFF"
-                placeholder="Email"
-                placeholderTextColor="#808080"
-                onChangeText={(email) => setEmail(email)}
-                style={styles.TextInput}
-              />
-            </View>
-        
+          <View style={styles.inputView}>
+            <TextInput
+              color="#FFFFFF"
+              placeholder="Email"
+              placeholderTextColor="#808080"
+              onChangeText={(email) => setEmail(email)}
+              style={styles.TextInput}
+            />
+          </View>
 
           <View style={styles.inputView}>
             <TextInput
@@ -111,7 +113,7 @@ const Registeration = ({ navigation }) => {
             />
           </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate("loginScreen")} >
+          <TouchableOpacity onPress={() => navigation.navigate("loginScreen")}>
             <Text style={styles.forgot_button}>Already Registered?</Text>
           </TouchableOpacity>
 
@@ -190,14 +192,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 30,
     backgroundColor: "#81E3CD",
-    marginBottom:37
+    marginBottom: 37,
   },
   nameouttercontainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     width: 220,
-    marginTop:"6%"
+    marginTop: "6%",
   },
   outterdiv: {
     backgroundColor: "#FCF1FB`",
@@ -205,6 +207,6 @@ const styles = StyleSheet.create({
   },
   loginText: {
     color: "#000000",
-    fontWeight:"bold"
+    fontWeight: "bold",
   },
 });
