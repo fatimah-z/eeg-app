@@ -76,11 +76,7 @@ const ViewPatient = ({ route, navigation }) => {
         </View>
         <FlatList
           style={{ marginTop: 20 }}
-          data={patients
-            .concat(patients)
-            .concat(patients)
-            .concat(patients)
-            .concat(patients)}
+          data={patients}
           numColumns={1}
           keyExtractor={(item, index) => index}
           renderItem={({ item }) => (

@@ -15,7 +15,7 @@ import {
 import { firebase } from "../configauth";
 import Background from "../assets/login.jpg";
 import axios from "axios";
-const patientData = () => {
+const PatientData = () => {
   const eegFilesRef = firebase.firestore().collection("eegFiles");
   const [files, setFiles] = useState(null);
   const [donwloading, setDownloading] = useState(false);
@@ -133,9 +133,7 @@ const patientData = () => {
                   justifyContent: "center",
                 }}
               >
-                <Pressable
-                  onPress={() => handleFile(item.fileDownloadURL, item.name)}
-                >
+                <Pressable onPress={() => navigation.navigate("viewAnalysis")}>
                   <Text style={{ color: "grey" }}>Select</Text>
                 </Pressable>
               </View>
@@ -151,4 +149,4 @@ const patientData = () => {
     // </View>
   );
 };
-export default patientData;
+export default PatientData;
