@@ -41,7 +41,6 @@ const Login = ({ navigation }) => {
 
           <View style={styles.container}>
             <StatusBar style="auto" />
-            
 
             <View style={styles.inputView}>
               <TextInput
@@ -133,12 +132,11 @@ const styles = StyleSheet.create({
 
   loginBtn: {
     width: "80%",
-    borderRadius: 25,
+    borderRadius: 10,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
-    backgroundColor: "#81E3CD",
+    backgroundColor: "#ffffff",
   },
   div: {},
 

@@ -186,13 +186,11 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     width: "80%",
-    borderRadius: 25,
+    borderRadius: 10,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 30,
-    backgroundColor: "#81E3CD",
-    marginBottom: 37,
+    backgroundColor: "#ffffff",
   },
   nameouttercontainer: {
     flexDirection: "row",
