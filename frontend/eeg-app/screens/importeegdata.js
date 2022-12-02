@@ -55,22 +55,22 @@ const ImportData = ({ route, navigation }) => {
   //     setData(resp.data);
   //     console.log(data);
   //   } catch (error) {
-  //   } finally { 
+  //   } finally {
   //   }
   // };
 
   const onAnalyze = async () => {
     setloading(true);
-    const data = new FormData()
-    data.append('file',selectedFile,'file')
-    data.append('fileName',selectedFileName)
+    const data = new FormData();
+    data.append("file", selectedFile, "file");
+    data.append("fileName", selectedFileName);
     try {
       const response = await fetch("http://192.168.43.137:4000/load", {
-        method: "POST", 
+        method: "POST",
         // body:{'file': selectedFile,'fileName': selectedFileName},
         body: data,
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
       const resp = await response.json();
@@ -78,18 +78,18 @@ const ImportData = ({ route, navigation }) => {
       setData(resp.data);
       console.log(data);
     } catch (error) {
-    } finally { 
+    } finally {
     }
   };
 
   const openGallery = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
-    
+
     if (!result.cancelled) {
       setselectedImage(true);
       setselectedFileName(result.name);
-      const File_= new File(result.file)
-      setselectedFile(File_)
+      // const File_ = new File(result.file, "file");
+      // setselectedFile(File_);
       const r = await fetch(result.uri);
       r.blob().then((b) => {
         setBlobFile(b);
