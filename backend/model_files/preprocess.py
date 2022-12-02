@@ -12,7 +12,7 @@ Original file is located at
 import re
 from getpass import getpass
 import pyedflib
-from collections import Counter
+# from collections import Counter
 from pywt import swt
 import re
 import pandas as pd     
@@ -42,7 +42,8 @@ from keras.layers import Dense
 
 import h5py
 ch_list1=[]
-with h5py.File('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/TUH_filt_new4.hdf5','r') as hdf:
+# with h5py.File('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/TUH_filt_new4.hdf5','r') as hdf:
+with h5py.File('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/TUH_filt_new4.hdf5','r') as hdf: 
   baseitems = list(hdf.items())
   # print(baseitems)
   g1 = hdf.get(baseitems[0][0])
@@ -125,6 +126,7 @@ channel_keeps = ch_list1
 regex = re.compile('30|PHOTIC|EKG|PG')
 channel_keeps = [i for i in channel_keeps if not regex.search(i)]
 raw_data, freq = data_load('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00003306_s001_t001.edf', channel_keeps)
+# raw_data, freq = data_load('https://firebasestorage.googleapis.com/v0/b/test-3fc13.appspot.com/o/testFiles%2F00003306_s001_t001.edf?alt=media&token=c3a0e1d3-d75f-4ecf-a516-3fa251adf27f', channel_keeps)
 # 
 # raw_data, freq = data_load('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00001984_s001_t001.edf', channel_keeps)
 # print(raw_data.shape)
@@ -156,7 +158,7 @@ def create_events(file_name, df, code = None):
     return data_y
 
 # raw_events = create_events(DOWNLOAD_DIR+'/'+file_ID+'.tse', raw_data)
-raw_events = create_events('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00003306_s001_t001.tse', raw_data)
+# raw_events = create_events('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00003306_s001_t001.tse', raw_data)
 # raw_events = create_events('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00001984_s001_t001.tse', raw_data)
 # print(raw_events )
 
@@ -196,7 +198,7 @@ def window_y(events, window_size, overlap, target=None, baseline=None):
 
   return data_y
 
-def downsample(data_x, data_y, freq):
+def downsample(data_x,freq):
     if freq > 256:
         if freq >= 1000:
           subsample = 4
@@ -205,9 +207,10 @@ def downsample(data_x, data_y, freq):
 
         freq = freq/subsample
         data_x = data_x[::subsample]
-        data_y = data_y[::subsample]
+        # data_y = data_y[::subsample]
 
-    return data_x, data_y, freq
+    # return data_x, data_y, freq
+    return data_x, freq
 
 def window(a, w, o, copy = False):
   # if there is no window to be applied
@@ -248,7 +251,7 @@ def window_x(data, window_size, overlap):
 
 # print(raw_data.values)
 # print(raw_events.values)
-down_x, down_y, down_freq = downsample(raw_data.values, raw_events.values, freq)
+down_x,down_freq = downsample(raw_data.values, freq)
 # print('down_x',down_x.shape)
 # print('down_y',down_y)
 # print('down_x',down_freq)
@@ -269,7 +272,8 @@ scaled_data = SS.fit_transform(filt_data)
 # print('scaled_data1',scaled_data)
 # print('scaled_data1shape',scaled_data.shape)
 # print('raw_data.columns',raw_data.columns)
-scaled_data = pd.DataFrame(scaled_data, columns = raw_data.columns, index = down_y)
+# scaled_data = pd.DataFrame(scaled_data, columns = raw_data.columns, index = down_y)
+scaled_data = pd.DataFrame(scaled_data, columns = raw_data.columns)
 # scaled_data = pd.DataFrame(scaled_data, columns = raw_data.columns, index = raw_data.index)
 # print('scaled_data',scaled_data)
 # print('scaled_datashape',scaled_data.shape)
@@ -297,8 +301,8 @@ def window_y1(data, window_size, overlap,data1):
 data_x = window_x(scaled_data, window_size, overlap)
 # data_y = window_y(scaled_data.index.values, window_size, overlap, target=None, 
 #                         baseline=6)
-data_y = window_y(raw_data.index.values, window_size, overlap, target=None, 
-                        baseline=6)
+# data_y = window_y(raw_data.index.values, window_size, overlap, target=None, 
+#                         baseline=6)
 
 data_y1 = window_y1(raw_data.index.values, window_size, overlap,scaled_data)
 

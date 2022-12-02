@@ -44,8 +44,18 @@ const Profile = ({ route, navigation }) => {
       getEmail: email,
     });
   };
+<<<<<<< HEAD
   const viewPatientBtn = () => {
     navigation.navigate("viewPatient");
+=======
+
+  const RecordedDataBtn = () => {
+    navigation.navigate("RecordingScreen", 
+    // {
+    //   getEmail: email,
+    // }
+    );
+>>>>>>> 3b2a8bb8670c96068c1e581a6459d67287dcca67
   };
   return (
     <View style={Styles.container}>
@@ -75,10 +85,11 @@ const Profile = ({ route, navigation }) => {
               icon={<Feather name="upload-cloud" size={40} color="black" />}
             />
             <Tile
+              onPress={()=>RecordedDataBtn()}
               icon={
                 <MaterialCommunityIcons name="brain" size={40} color="black" />
               }
-              text="Record EEG Data"
+              text="Recorded EEG Data"
             />
           </View>
           <View style={Styles.row}>

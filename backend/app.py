@@ -16,12 +16,19 @@ from dotenv import load_dotenv
 from scipy import stats
 from flask import request
 from model_files import preprocess
+# from model_files import singlefile_pred
+from google.cloud import storage
+# from config import storage_
 
 load_dotenv()
 
 RAW_BRAINVISION_PATH = os.getenv('RAW_BRAINVISION_PATH')
 HOST =os.getenv('HOST')
 app = Flask(__name__)
+
+UPLOAD_FOLDER = 'C:/Users/Fatima/Documents/GitHub/eeg-app/backend/fileuploads/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ 
 CORS(app)
 
 @app.route('/view', methods=['GET'])
@@ -99,17 +106,52 @@ def getEEG():
     return jsonify({'arr2':'sent'})
     # return send_file('eegdata.json')
    
-@app.route('/load', methods=['GET'])
+# @app.route('/load', methods=['GET'])
+# def load_model():
+#     subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/preprocess.py'])
+#     conf = preprocess.seiz_len/ preprocess.total_length
+#     conf=float("{:.2f}".format(conf))
+#     return jsonify({'data':conf})
+
+@app.route('/load', methods=['POST'])
 def load_model():
+    target = 'C:/Users/Fatima/Documents/GitHub/eeg-app/backend/fileuploads'
+    # target=os.path.join(UPLOAD_FOLDER,'edf')
+    # if not os.path.isdir(target):
+    #     os.mkdir(target)
+    
+    # file = request.files['file']
+    # file = request.form.get('file')
+    # print('file', file)
+    # filename = request.form.get('fileName')
+    # print('filename',filename)
+    # destination="/".join([target,filename])
+    # file.save(target)
     subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/preprocess.py'])
     conf = preprocess.seiz_len/ preprocess.total_length
     conf=float("{:.2f}".format(conf))
     return jsonify({'data':conf})
 
-@app.route('/uploadFile',methods=['Post'] )
+@app.route('/uploadFile',methods=['GET'] )
 def upload_file():
-    url = request.get_json('url',force=True)
+    # # url = request.get_json('url',force=True)
+    # bucket_name = "test-3fc13"
+    # source_blob_name = "2F00003306_s001_t001.edf"
+    # storage_client = storage.Client(storage_)
+    # bucket = storage_client.bucket(bucket_name)
+    # blob = bucket.blob(source_blob_name)
+    # destination_file_name='C:/Users/Fatima/Documents/GitHub/eeg-app/backend/uploads/'
+    # blob.download_to_filename(destination_file_name)
+    url='https://firebasestorage.googleapis.com/v0/b/test-3fc13.appspot.com/o/testFiles%2F00003306_s001_t001.edf?alt=media&token=c3a0e1d3-d75f-4ecf-a516-3fa251adf27f'
     return jsonify({'url': url})
+
+
+@app.route('/rawDataModel',methods=['GET','POST'])
+def load_model_():
+    # subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/singlefile_pred.py'])
+    # threshold = singlefile_pred.pc
+    # return jsonify({'data':threshold})
+    return jsonify({'data':'data'})
 
 if __name__ == "__main__":
     app.run(HOST, port='4000',debug=True)
