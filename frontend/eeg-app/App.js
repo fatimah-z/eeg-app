@@ -13,6 +13,7 @@ import viewReport from "./screens/Report";
 import viewPatient from "./screens/viewpatient";
 import chatBot from "./screens/chatBot";
 import Icon from "react-native-vector-icons/Ionicons";
+import patientData from "./screens/patientData";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -68,6 +69,11 @@ function App() {
         <ProfileStack.Screen
           name="profileScreen"
           component={Profile}
+          options={{ headerStyle: { height: 0 } }}
+        />
+        <ProfileStack.Screen
+          name="patientData"
+          component={patientData}
           options={{ headerStyle: { height: 0 } }}
         />
         <ProfileStack.Screen

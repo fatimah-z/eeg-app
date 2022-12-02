@@ -74,11 +74,12 @@ const ImportData = ({ route, navigation }) => {
       setselectedImage(true);
       setselectedFileName(result.name);
       const r = await fetch(result.uri);
-      const b = await r.blob(); // blob is the format in which we upload files
-      setBlobFile(b);
+      r.blob().then((b) => {
+        setBlobFile(b);
+      });
     }
   };
-  const uploadFile = (blobFile) => {
+  const uploadFile = () => {
     setUploading(true);
     if (!blobFile) return;
 
@@ -87,18 +88,19 @@ const ImportData = ({ route, navigation }) => {
     uploadBytesResumable(sotrageRef, blobFile).then((snapshot) => {
       getDownloadURL(snapshot.ref)
         .then((downloadURL) => {
+          console.log("step3");
           setDoc(doc(db, "eegFiles", selectedFileName), {
             fileDownloadURL: downloadURL,
             name: selectedFileName,
             uploadedAt: Timestamp.fromDate(new Date()),
             useremail: email,
             patientData: {
-              firstName: route.params.firstName,
-              lastName: route.params.lastName,
+              name: route.params.name,
               contact: route.params.contact,
             },
           })
             .then(() => {
+              console.log("step4");
               setUploading(false);
               setuploaded("File Uploaded");
               return downloadURL;
