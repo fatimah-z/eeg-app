@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from scipy import stats
 from flask import request
 from model_files import preprocess
-# from model_files import singlefile_pred
+from model_files import singlefile_pred
 from google.cloud import storage
 # from config import storage_
 
@@ -113,7 +113,7 @@ def getEEG():
 #     conf=float("{:.2f}".format(conf))
 #     return jsonify({'data':conf})
 
-@app.route('/load', methods=['POST'])
+@app.route('/load', methods=['GET'])
 def load_model():
     target = 'C:/Users/Fatima/Documents/GitHub/eeg-app/backend/fileuploads'
     # target=os.path.join(UPLOAD_FOLDER,'edf')
@@ -148,10 +148,10 @@ def upload_file():
 
 @app.route('/rawDataModel',methods=['GET','POST'])
 def load_model_():
-    # subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/singlefile_pred.py'])
-    # threshold = singlefile_pred.pc
-    # return jsonify({'data':threshold})
-    return jsonify({'data':'data'})
+    subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/singlefile_pred.py'])
+    threshold = singlefile_pred.pc
+    return jsonify({'data':threshold})
+    # return jsonify({'data':'data'})
 
 if __name__ == "__main__":
     app.run(HOST, port='4000',debug=True)

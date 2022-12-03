@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 import { View,Text,StyleSheet ,TouchableOpacity,FlatList,Button,ImageBackground} from "react-native";
 import { db, storage } from "../config";
 import {firebase} from "../firebase";
-import { getStorage, ref, listAll } from "firebase/storage";
+import { getStorage, ref, listAll,getDownloadURL,getBlob } from "firebase/storage";
 import Background from "../assets/background.jpg";
+import AnimatedLoader from "react-native-animated-loader";
 
 export default function App({navigation,route}){
   
@@ -27,17 +28,19 @@ export default function App({navigation,route}){
     <TouchableOpacity>
       <Text>{title}</Text>
       <Button title="Generate Report"
-      //  onPress={onAnalyze}
+        onPress={()=>{onAnalyze(title)}}
        />
     </TouchableOpacity>
   );
   const renderItem = ({ item }) => (
     <Item title={item.title} />
   );
-    const[items,setitems]= useState();
+    const[items,setitems]= useState([]);
     const [data, setData] = useState();
-    const onAnalyze = async () => {
-      // setloading(true);
+    const [visible, setVisible] = useState(false);
+    const [loading, setloading] = useState(false);
+    const onAnalyze = async (filename) => {
+      setloading(true);
       try {
         const response = await fetch("http://192.168.43.137:4000/rawDataModel", {
           method: "GET",
@@ -48,28 +51,39 @@ export default function App({navigation,route}){
         console.log(data);
       } catch (error) {
       } finally {
-        // if(data){
-        // setloading(false);
-        // navigation.navigate('ViewAnalysis',{resp_data:data});
-        // }
+        setloading(false);
+        if (data) {
+          // setloading(false);
+          navigation.navigate("SecondReportScreen", { resp_data: data,filename:filename });
+        }
       }
     };
-    const getFiles=()=>{
-        const storageref= ref(storage,'recordedFiles/')
-        listAll(storageref)
-  .then((res) => {
-    res.prefixes.forEach((folderRef) => {
-      // All the prefixes under listRef.
-      // You may call listAll() recursively on them.
+    useEffect(()=>{
+      // setloading(true);
+      setInterval(() => {
+        setVisible(!visible);
+      }, 2000);
+      const files=[];
+      const storageref= ref(storage,'recordedFiles/')
+      listAll(storageref)
+      .then((res) => {
+        res.items.forEach((itemRef) => {
+          getDownloadURL(itemRef).then((url)=>{
+        // url=url
+        // console.log(url)
+        files.push({
+          id: itemRef.fullPath,
+          title: itemRef.name,
+          url:url
+        });
+        });
+        setitems(files);
+        // if(items){
+        //     setloading(false);
+        //   }
     });
-    res.items.forEach((itemRef) => {
-      // All the items under listRef.
-    });
-  }).catch((error) => {
-    // Uh-oh, an error occurred!
   });
-        
-    }
+  },[data]);
     return(
         <View style={Styles.container}>
           <ImageBackground
@@ -82,15 +96,30 @@ export default function App({navigation,route}){
                     Recorded Files
                 </Text>
             </View>
+            {loading?(
+              <View>
+              <AnimatedLoader
+                visible={visible}
+                overlayColor="rgba(255,255,255,0.75)"
+                animationStyle={Styles.lottie}
+                speed={1}
+              >
+                <Text style={Styles.txt}>Loading</Text>
+              </AnimatedLoader>
+            </View>
+
+            ):(
+
             <View style={Styles.box}>
             <FlatList
-        data={DATA}
+        data={items}
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
           </View>
-      </ImageBackground>
-    </View>
+            )}
+            </ImageBackground>
+          </View>
     )
 }
 

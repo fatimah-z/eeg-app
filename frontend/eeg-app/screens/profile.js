@@ -44,18 +44,15 @@ const Profile = ({ route, navigation }) => {
       getEmail: email,
     });
   };
-<<<<<<< HEAD
   const viewPatientBtn = () => {
     navigation.navigate("viewPatient");
-=======
-
+  }
   const RecordedDataBtn = () => {
     navigation.navigate("RecordingScreen", 
     // {
     //   getEmail: email,
     // }
     );
->>>>>>> 3b2a8bb8670c96068c1e581a6459d67287dcca67
   };
   return (
     <View style={Styles.container}>
