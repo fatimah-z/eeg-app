@@ -40,7 +40,7 @@ const ImportData = ({ route, navigation }) => {
     }, 2000);
     if (data) {
       setloading(false);
-      navigation.navigate("ViewAnalysis", { resp_data: data });
+      navigation.navigate("ViewAnalysis", { resp_data: data,filename:selectedFileName,pname:route.params.name});
     }
   }, [data]);
 

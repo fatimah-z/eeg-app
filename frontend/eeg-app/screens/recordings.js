@@ -1,6 +1,6 @@
 // import { ref } from "firebase/storage";
 import React, { useState, useEffect } from "react";
-import { View,Text,StyleSheet ,TouchableOpacity,FlatList,Button,ImageBackground} from "react-native";
+import { View,Text,StyleSheet ,TouchableOpacity,FlatList,Button,ImageBackground,Pressable} from "react-native";
 import { db, storage } from "../config";
 import {firebase} from "../firebase";
 import { getStorage, ref, listAll,getDownloadURL,getBlob } from "firebase/storage";
@@ -25,12 +25,37 @@ export default function App({navigation,route}){
   ]
   
   const Item = ({ title }) => (
-    <TouchableOpacity>
-      <Text>{title}</Text>
-      <Button title="Generate Report"
+    <View
+              style={{
+                padding: 10,
+                backgroundColor: "#c3c3c350",
+                marginVertical: 10,
+                marginHorizontal: 20,
+                borderRadius: 10,
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <View style={{ flex: 1, padding:5}}>
+                <Text style={{fontWeight:"bold" }}>{title}</Text>
+              </View>
+              <View>
+              <Pressable
+              onPress={()=>{onAnalyze(title)}}
+              >
+               <Text style={{ color: "#557C74" }}>Generate Report</Text> 
+              </Pressable>
+              </View>
+    {/* <TouchableOpacity>
+      <Text style={Styles.Details}>{title}</Text>
+      <TouchableOpacity 
         onPress={()=>{onAnalyze(title)}}
-       />
-    </TouchableOpacity>
+        style={Styles.loginBtn}
+       >
+        <Text>Generate Report</Text>
+       </TouchableOpacity>
+    </TouchableOpacity> */}
+    </View>
   );
   const renderItem = ({ item }) => (
     <Item title={item.title} />
@@ -110,13 +135,13 @@ export default function App({navigation,route}){
 
             ):(
 
-            <View style={Styles.box}>
+            // <View style={Styles.box}>
             <FlatList
         data={items}
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
-          </View>
+          // </View>
             )}
             </ImageBackground>
           </View>
@@ -157,5 +182,18 @@ const Styles = StyleSheet.create({
       image: {
         height: "100%",
         width: "100%",
+      },
+      loginBtn: {
+        width: "80%",
+        borderRadius: 10,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#ffffff",
+      },
+      Details:{
+        fontWeight:"bold",
+        fontSize:15,
+        marginTop:15,
       },
 })

@@ -128,7 +128,7 @@ def load_model():
     # destination="/".join([target,filename])
     # file.save(target)
     subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/preprocess.py'])
-    conf = preprocess.seiz_len/ preprocess.total_length
+    conf = (preprocess.seiz_len/ preprocess.total_length)*100
     conf=float("{:.2f}".format(conf))
     return jsonify({'data':conf})
 

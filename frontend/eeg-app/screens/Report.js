@@ -17,6 +17,9 @@ import {
   export default function App({navigation,route}){
     const[data,setdata] = useState();
     const{data_}=route.params.data_sent;
+    const handleOnPress=()=>{
+      navigation.navigate('finalReport',{data_sent:route.params.data_sent,filename:route.params.filename,pname:route.params.pname});
+    }
     useEffect(()=>{
       // setdata(route.params.sent_data)
       // setdata(navigation.getparam('sent_data'))
@@ -59,8 +62,16 @@ import {
             </ScrollView>
             <Text style={styles.txt}>Seizure Window 4</Text>
             </View>
+            <View style={{justifyContent:'center',alignItems:'center',marginTop:15}}>
+
+            <TouchableOpacity style={styles.loginBtn} onPress={handleOnPress}>
+            <Text style={styles.loginText} >View Final Report</Text>
+          </TouchableOpacity>
+            </View>
+            {/* <Button style={styles.loginBtn} onPress={handleOnPress} title='View Final Report'></Button> */}
             <View style={styles.txtbox}>
-            <Text style={styles.txt}>Seizure Percentage:{route.params.data_sent}</Text>
+            {/* <Text style={styles.txt}>Abnormal EEG fragments detected.</Text>
+            <Text style={styles.txt}>The seizure Percentage is found to be {route.params.data_sent}</Text> */}
             </View>
            </ScrollView>
         </View>
@@ -70,12 +81,11 @@ import {
   const styles = StyleSheet.create({
     loginBtn: {
       width: "80%",
-      borderRadius: 25,
+      borderRadius: 10,
       height: 50,
       alignItems: "center",
       justifyContent: "center",
-  
-      backgroundColor: "#BB005E",
+      backgroundColor: "#ffffff",
     },
     txtbox:{
       height:"30%",
