@@ -55,7 +55,7 @@ const ImportData = ({ route, navigation }) => {
   //     setData(resp.data);
   //     console.log(data);
   //   } catch (error) {
-  //   } finally { 
+  //   } finally {
   //   }
   // };
 
@@ -78,23 +78,18 @@ const ImportData = ({ route, navigation }) => {
       setData(resp.data);
       console.log(data);
     } catch (error) {
-    } finally { 
+    } finally {
     }
   };
 
   const openGallery = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
-    
+
     if (!result.cancelled) {
       setselectedImage(true);
       setselectedFileName(result.name);
-      // const File_= new File(result.file)
       // setselectedFile(File_)
       const r = await fetch(result.uri);
-      r.blob().then((b) => {
-        setBlobFile(b);
-      });
-    }
   };
   const uploadFile = () => {
     setUploading(true);
