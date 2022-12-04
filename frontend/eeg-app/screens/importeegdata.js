@@ -23,7 +23,7 @@ import { firebase } from "../configauth";
 import Tile from "../components/Tile";
 import { AntDesign } from "@expo/vector-icons";
 
-const ImportData = ({ route, navigation }) => {
+export default ImportData = ({ route, navigation }) => {
   const email = firebase.auth().currentUser.email;
   const [selectedImage, setselectedImage] = useState(false);
   const [selectedFileName, setselectedFileName] = useState("");
@@ -90,6 +90,7 @@ const ImportData = ({ route, navigation }) => {
       setselectedFileName(result.name);
       // setselectedFile(File_)
       const r = await fetch(result.uri);
+    }
   };
   const uploadFile = () => {
     setUploading(true);
@@ -209,7 +210,7 @@ const ImportData = ({ route, navigation }) => {
     </View>
   );
 };
-export default ImportData;
+
 const Styles = StyleSheet.create({
   loadingimg: {
     flexDirection: "row",
