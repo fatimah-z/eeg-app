@@ -1,11 +1,12 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { Text, TouchableOpacity } from "react-native";
 
-const Tile = ({ children, text, icon, onPress }) => {
+const Tile = ({ children, text, icon, onPress, style }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
       style={{
+        ...style,
         height: 130,
         width: 130,
         backgroundColor: "#ffffff80",

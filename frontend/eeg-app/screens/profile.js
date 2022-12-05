@@ -40,7 +40,7 @@ const Profile = ({ route, navigation }) => {
       });
   }, []);
   const uploadDataBtn = () => {
-    navigation.navigate("patientHistoryScreen", {
+    navigation.navigate("newOrOldPatient", {
       getEmail: email,
     });
   };
@@ -70,7 +70,7 @@ const Profile = ({ route, navigation }) => {
 
           <View style={Styles.row}>
             <Tile
-              onPress={() => uploadDataBtn()}
+              onPress={uploadDataBtn}
               text="Upload Data"
               icon={<Feather name="upload-cloud" size={40} color="black" />}
             />
