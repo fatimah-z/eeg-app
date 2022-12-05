@@ -23,7 +23,7 @@ import { firebase } from "../configauth";
 import Tile from "../components/Tile";
 import { AntDesign } from "@expo/vector-icons";
 
-const ImportData = ({ route, navigation }) => {
+export default ImportData = ({ route, navigation }) => {
   const email = firebase.auth().currentUser.email;
   const [selectedImage, setselectedImage] = useState(false);
   const [selectedFileName, setselectedFileName] = useState("");
@@ -40,7 +40,7 @@ const ImportData = ({ route, navigation }) => {
     }, 2000);
     if (data) {
       setloading(false);
-      navigation.navigate("ViewAnalysis", { resp_data: data });
+      navigation.navigate("ViewAnalysis", { resp_data: data,filename:selectedFileName,pname:route.params.name});
     }
   }, [data]);
 
@@ -61,17 +61,17 @@ const ImportData = ({ route, navigation }) => {
 
   const onAnalyze = async () => {
     setloading(true);
-    const data = new FormData();
-    data.append("file", selectedFile, "file");
-    data.append("fileName", selectedFileName);
+    // const data = new FormData()
+    // data.append('file',selectedFile,'file')
+    // data.append('fileName',selectedFileName)
     try {
       const response = await fetch("http://192.168.43.137:4000/load", {
-        method: "POST",
+        method: "GET"
         // body:{'file': selectedFile,'fileName': selectedFileName},
-        body: data,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        // body: selectedFileName,
+        // headers: {
+        //   'Content-Type': 'multipart/form-data',
+        // },
       });
       const resp = await response.json();
       console.log(resp.data);
@@ -88,12 +88,8 @@ const ImportData = ({ route, navigation }) => {
     if (!result.cancelled) {
       setselectedImage(true);
       setselectedFileName(result.name);
-      // const File_ = new File(result.file, "file");
-      // setselectedFile(File_);
+      // setselectedFile(File_)
       const r = await fetch(result.uri);
-      r.blob().then((b) => {
-        setBlobFile(b);
-      });
     }
   };
   const uploadFile = () => {
@@ -214,7 +210,7 @@ const ImportData = ({ route, navigation }) => {
     </View>
   );
 };
-export default ImportData;
+
 const Styles = StyleSheet.create({
   loadingimg: {
     flexDirection: "row",

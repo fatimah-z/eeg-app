@@ -246,12 +246,11 @@ firstarr != null
 const Styles = StyleSheet.create({
   loginBtn: {
     width: "80%",
-    borderRadius: 25,
+    borderRadius: 10,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-
-    backgroundColor: "#BB005E",
+    backgroundColor: "#ffffff",
   },
   doneimg: {
     flexDirection: "row",

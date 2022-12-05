@@ -15,6 +15,9 @@ import chatBot from "./screens/chatBot";
 import Icon from "react-native-vector-icons/Ionicons";
 import NewOrOldPatient from "./screens/newOrOldPatient";
 import patientData from "./screens/patientData";
+import Recordings from "./screens/recordings";
+import SecondReport from  "./screens/SecondReport";
+import finalReport from './screens/FinalReport';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -91,6 +94,21 @@ function App() {
         <ProfileStack.Screen
           name="patientHistoryScreen"
           component={PatientHistory}
+          options={{ headerStyle: { height: 0 } }}
+        />
+        <ProfileStack.Screen
+          name="RecordingScreen"
+          component={Recordings}
+          options={{ headerStyle: { height: 0 } }}
+        />
+        <ProfileStack.Screen
+          name="SecondReportScreen"
+          component={SecondReport}
+          options={{ headerStyle: { height: 0 } }}
+        />
+         <ProfileStack.Screen
+          name="finalReport"
+          component={finalReport}
           options={{ headerStyle: { height: 0 } }}
         />
         <ProfileStack.Screen

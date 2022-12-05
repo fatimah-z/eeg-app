@@ -21,7 +21,7 @@ export default function App({navigation,route}){
     // setdata(navigation.getparam('resp_data'))
   })
   const handleonPress= ()=>{
-    navigation.navigate('ViewReport',{data_sent:route.params.resp_data});
+    navigation.navigate('ViewReport',{data_sent:route.params.resp_data,filename:route.params.filename,pname:route.params.pname});
   }
     return(
         <View style={styles.outterdiv}>
@@ -35,8 +35,8 @@ export default function App({navigation,route}){
           />
           </ScrollView>
           <Text style={styles.txt}>EEG snapshot</Text>
-          <TouchableOpacity style={styles.loginBtn}>
-            <Text style={styles.loginText} onPress={handleonPress}>View Report</Text>
+          <TouchableOpacity style={styles.loginBtn} onPress={handleonPress}>
+            <Text style={styles.loginText} >View More</Text>
           </TouchableOpacity>
           </View>
         </View>
