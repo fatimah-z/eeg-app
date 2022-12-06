@@ -170,6 +170,7 @@ export default ImportData = ({ route, navigation }) => {
           {uploading ? (
             <View>
               <AnimatedLoader
+                source= {require("../assets/96898-loader-animation.json")}
                 visible={visible}
                 overlayColor="rgba(255,255,255,0.75)"
                 animationStyle={Styles.lottie}
@@ -187,6 +188,7 @@ export default ImportData = ({ route, navigation }) => {
             {loading ? (
               <View>
                 <AnimatedLoader
+                  source= {require("../assets/96898-loader-animation.json")}
                   visible={visible}
                   overlayColor="rgba(255,255,255,0.75)"
                   animationStyle={Styles.lottie}

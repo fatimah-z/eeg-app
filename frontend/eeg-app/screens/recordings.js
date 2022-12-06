@@ -124,6 +124,7 @@ export default function App({navigation,route}){
             {loading?(
               <View>
               <AnimatedLoader
+                source= {require("../assets/96898-loader-animation.json")}
                 visible={visible}
                 overlayColor="rgba(255,255,255,0.75)"
                 animationStyle={Styles.lottie}
@@ -195,5 +196,9 @@ const Styles = StyleSheet.create({
         fontWeight:"bold",
         fontSize:15,
         marginTop:15,
+      },
+      lottie: {
+        width: 100,
+        height: 100,
       },
 })

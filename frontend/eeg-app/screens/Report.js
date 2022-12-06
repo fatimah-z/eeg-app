@@ -79,14 +79,14 @@ import {
   }
 
   const styles = StyleSheet.create({
-    loginBtn: {
-      width: "80%",
-      borderRadius: 10,
-      height: 50,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: "#ffffff",
-    },
+    // loginBtn: {
+    //   width: "80%",
+    //   borderRadius: 10,
+    //   height: 50,
+    //   alignItems: "center",
+    //   justifyContent: "center",
+    //   backgroundColor: "#ffffff",
+    // },
     txtbox:{
       height:"30%",
       width: "80%"

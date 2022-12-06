@@ -15,12 +15,52 @@ import {
 import { firebase } from "../configauth";
 import Background from "../assets/login.jpg";
 import axios from "axios";
-const PatientData = () => {
+import AnimatedLoader from "react-native-animated-loader";
+const PatientData = ({navigation,route}) => {
   const eegFilesRef = firebase.firestore().collection("eegFiles");
   const [files, setFiles] = useState(null);
   const [donwloading, setDownloading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [loading, setloading] = useState(false);
+  const [filename, setfilename] = useState(false);
+  const[data,setData] = useState()
+  const handlepress = async(name)=>{
+    try {
+      // setfilename(name);
+      setloading(true);
+      const response = await fetch("http://192.168.43.137:4000/load", {
+        method: "GET"
+        // body:{'file': selectedFile,'fileName': selectedFileName},
+        // body: selectedFileName,
+        // headers: {
+        //   'Content-Type': 'multipart/form-data',
+        // },
+      });
+      const resp = await response.json();
+      console.log(resp.data);
+      setData(resp.data);
+      console.log(data);
+    } catch (error) {
+    } finally {
+
+      // if (data) {
+      //   setloading(false);
+      //   navigation.navigate("ViewAnalysis", {resp_data:data,filename:name,pname:route.params.name});
+      //   }
+    }
+    // setloading(false);
+    // navigation.navigate("ViewAnalysis", { resp_data: data,filename:name,pname:route.params.name});
+    
+  }
   useEffect(() => {
+    setInterval(() => {
+      setVisible(!visible);
+    }, 2000);
+    if (data) {
+    setloading(false);
+    navigation.navigate("ViewAnalysis", {resp_data: data,filename:filename,pname:route.params.name});
+    }
     eegFilesRef.get().then((result) => {
       const allFiles = [];
       result.forEach((file) => {
@@ -28,7 +68,7 @@ const PatientData = () => {
       });
       setFiles(allFiles);
     });
-  }, []);
+  }, [data]);
   const onSelect = () => {};
 
   const handleFile = (url, name) => {
@@ -44,7 +84,7 @@ const PatientData = () => {
 
         axios({
           method: "POST",
-          url: `http://192.168.0.104:4000/uploadFile`,
+          url: `http://192.168.43.137/uploadFile`,
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -81,6 +121,19 @@ const PatientData = () => {
   );
   return (
     <View>
+      {loading?(
+        <View>
+        <AnimatedLoader
+          source= {require("../assets/96898-loader-animation.json")}
+          visible={visible}
+          overlayColor="rgba(255,255,255,0.75)"
+          animationStyle={Styles.lottie}
+          speed={1}
+        >
+          <Text style={Styles.txt}>Loading</Text>
+        </AnimatedLoader>
+      </View>
+      ):(
       <ImageBackground
         source={Background}
         resizeMode="cover"
@@ -133,7 +186,9 @@ const PatientData = () => {
                   justifyContent: "center",
                 }}
               >
-                <Pressable onPress={() => navigation.navigate("viewAnalysis")}>
+                <Pressable onPress={()=>{
+                  setfilename(item.name)
+                  handlepress(item.name)}}>
                   <Text style={{ color: "grey" }}>Select</Text>
                 </Pressable>
               </View>
@@ -141,6 +196,7 @@ const PatientData = () => {
           )}
         ></FlatList>
       </ImageBackground>
+      )}
     </View>
     // <View style={{ alignItems: "center", justifyContent: "center" }}>
     //   <FlatList data={files} renderItem={renderItem}></FlatList>
@@ -150,3 +206,14 @@ const PatientData = () => {
   );
 };
 export default PatientData;
+
+const Styles = StyleSheet.create({
+  txt: {
+    fontWeight: "bold",
+    marginBottom: "3%",
+  },
+  lottie: {
+    width: 100,
+    height: 100,
+  },
+});
