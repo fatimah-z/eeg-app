@@ -18,7 +18,7 @@ import axios from "axios";
 const PatientData = () => {
   const eegFilesRef = firebase.firestore().collection("eegFiles");
   const [files, setFiles] = useState(null);
-  const [donwloading, setDownloading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [uploading, setUploading] = useState(false);
   useEffect(() => {
     eegFilesRef.get().then((result) => {
@@ -32,43 +32,13 @@ const PatientData = () => {
   const onSelect = () => {};
 
   const handleFile = (url, name) => {
-    setDownloading(true);
     axios
-      .get(url, { responseType: "blob" })
+      .post(`http://192.168.0.103:4000/uploadFile`, { url, name })
       .then((res) => {
-        setDownloading(false);
-        const downloadedFile = new File([res.data], name);
-        // console.log(url);
-        // const formData = new FormData();
-        // formData.append("file", downloadedFile);
-
-        axios({
-          method: "POST",
-          url: `http://192.168.0.104:4000/uploadFile`,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          data: downloadedFile,
-        })
-          .then((res) => {
-            console.log(res.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-
-        // axios
-        //   .post("http://192.168.0.104:4000/uploadFile", formData)
-        //   .then((res) => {
-        //     alert(res);
-        //   })
-        //   .catch((err) => {
-        //     console.log(err);
-        //   });
+        console.log(res.data);
       })
       .catch((err) => {
-        setDownloading(false);
-        alert(err);
+        console.log(err);
       });
   };
 
@@ -123,6 +93,7 @@ const PatientData = () => {
             >
               <View style={{ flex: 3 }}>
                 <Text>{item.name}</Text>
+                {downloading && <Text>Downloading...</Text>}
               </View>
               <View
                 style={{
@@ -133,7 +104,9 @@ const PatientData = () => {
                   justifyContent: "center",
                 }}
               >
-                <Pressable onPress={() => navigation.navigate("viewAnalysis")}>
+                <Pressable
+                  onPress={() => handleFile(item.fileDownloadURL, item.name)}
+                >
                   <Text style={{ color: "grey" }}>Select</Text>
                 </Pressable>
               </View>

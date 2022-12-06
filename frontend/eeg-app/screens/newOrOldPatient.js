@@ -15,11 +15,57 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
+import { doc, getDoc } from "firebase/firestore";
+
+import { firebase } from "../configauth";
+import db from "../config";
 import Tile from "../components/Tile";
 const NewOrOldPatient = ({ navigation }) => {
+  const useremail = firebase.auth().currentUser.email;
+  const eegFilesRef = firebase.firestore().collection("eegFiles");
   const [selected, setSelected] = useState(""); // new or existing
+  const [patientEmail, setPatientEmail] = useState("");
   const [patientName, setPatientName] = useState("");
-  const func = () => {};
+  const [DOB, setDOB] = useState("");
+  const [gender, setGender] = useState("");
+  const [head, setHead] = useState("");
+  const [dengue, setDengue] = useState("");
+  const [genetic, setGenetic] = useState("");
+  // const docRef = doc(db, "eegFiles", "SF");
+
+  const onContinue = async () => {
+    eegFilesRef.onSnapshot((querySnapshot) => {
+      // const patients = [];
+      querySnapshot.forEach((doc) => {
+        const { patientData } = doc.data();
+        if (patientData?.name) {
+          // console.log("1234567");
+          // console.log(patientData.email);
+          // console.log(patientEmail);
+          if (patientData.email == patientEmail) {
+            navigation.navigate("importDataScreen", {
+              name: patientData.name,
+              email: patientEmail,
+              gender: patientData.gender,
+              head: patientData.headInjury,
+              parental: patientData.dengue,
+              genatic: patientData.genaticInfluence,
+              DOB: patientData.dateOfBirth,
+              useremail: useremail,
+            });
+            setPatientName(patientData.name);
+            setHead(patientData.headInjury);
+            setDengue(patientData.dengue);
+            setGender(patientData.gender);
+            setGenetic(patientData.genaticInfluence);
+            setDOB(patientData.dateOfBirth);
+            console.log(patientData.email);
+            console.log("abcd");
+          }
+        }
+      });
+    });
+  };
   return (
     <View
       style={{
@@ -87,11 +133,11 @@ const NewOrOldPatient = ({ navigation }) => {
                 marginVertical: 50,
                 width: "100%",
               }}
-              placeholder="Enter Patient Name"
+              placeholder="Enter Patient Email"
               onChangeText={(val) => {
-                setPatientName(val);
+                setPatientEmail(val);
               }}
-              value={patientName}
+              value={patientEmail}
             ></TextInput>
             <TouchableOpacity
               style={{
@@ -102,6 +148,7 @@ const NewOrOldPatient = ({ navigation }) => {
                 justifyContent: "center",
                 backgroundColor: "#ffffff",
               }}
+              onPress={onContinue}
             >
               <Text>Continue</Text>
             </TouchableOpacity>
