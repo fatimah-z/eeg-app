@@ -40,7 +40,11 @@ export default ImportData = ({ route, navigation }) => {
     }, 2000);
     if (data) {
       setloading(false);
-      navigation.navigate("ViewAnalysis", { resp_data: data,filename:selectedFileName,pname:route.params.name});
+      navigation.navigate("ViewAnalysis", {
+        resp_data: data,
+        filename: selectedFileName,
+        name: route.params.name,
+      });
     }
   }, [data]);
 
@@ -66,7 +70,7 @@ export default ImportData = ({ route, navigation }) => {
     // data.append('fileName',selectedFileName)
     try {
       const response = await fetch("http://192.168.43.137:4000/load", {
-        method: "GET"
+        method: "GET",
         // body:{'file': selectedFile,'fileName': selectedFileName},
         // body: selectedFileName,
         // headers: {
@@ -90,26 +94,40 @@ export default ImportData = ({ route, navigation }) => {
       setselectedFileName(result.name);
       // setselectedFile(File_)
       const r = await fetch(result.uri);
+      r.blob().then((b) => {
+        setBlobFile(b);
+      });
     }
   };
   const uploadFile = () => {
     setUploading(true);
+    console.log("123");
     if (!blobFile) return;
+    console.log("567");
 
     const sotrageRef = ref(storage, `testFiles/${selectedFileName}`);
+    console.log("step3");
+    console.log(route.params.email);
+    console.log(route.params.useremail);
+    console.log(route.params.name);
+    console.log("abcd");
 
     uploadBytesResumable(sotrageRef, blobFile).then((snapshot) => {
       getDownloadURL(snapshot.ref)
         .then((downloadURL) => {
-          console.log("step3");
           setDoc(doc(db, "eegFiles", selectedFileName), {
             fileDownloadURL: downloadURL,
             name: selectedFileName,
             uploadedAt: Timestamp.fromDate(new Date()),
-            useremail: email,
+            useremail: route.params.useremail,
             patientData: {
               name: route.params.name,
-              contact: route.params.contact,
+              dengue: route.params.parental,
+              headInjury: route.params.head,
+              gender: route.params.gender,
+              genaticInfluence: route.params.genatic,
+              email: route.params.email,
+              dateOfBirth: route.params.DOB,
             },
           })
             .then(() => {

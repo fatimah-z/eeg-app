@@ -24,9 +24,9 @@ import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 
 export default function App({ navigation, route }) {
-  const email = firebase.auth().currentUser.email;
+  const useremail = firebase.auth().currentUser.email;
   const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
+  const [Email, setEmail] = useState("");
   const [gender, setGender] = useState("");
   const [head, setHead] = useState("");
   const [parental, setParental] = useState("");
@@ -40,7 +40,7 @@ export default function App({ navigation, route }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const onSubmit = () => {
     console.log(name);
-    console.log(contact);
+    console.log(Email);
     console.log(gender);
     console.log(head);
     console.log(parental);
@@ -58,9 +58,8 @@ export default function App({ navigation, route }) {
         doc(db, "eegFiles", "name12345"),
         {
           patientData: {
-            name: firstName,
-            lastName: lastName,
-            contact: contact,
+            name: name,
+            email: Email,
           },
         },
         { merge: true }
@@ -69,12 +68,13 @@ export default function App({ navigation, route }) {
     } else {
       navigation.navigate("importDataScreen", {
         name: name,
-        contact: contact,
+        email: Email,
         gender: gender,
         head: head,
         parental: parental,
         genatic: genatic,
-        email: email,
+        useremail: useremail,
+        DOB: date,
       });
     }
   };
@@ -192,9 +192,9 @@ export default function App({ navigation, route }) {
                   <TextInput
                     color="#000000"
                     cursorColor="grey"
-                    placeholder="Contact Number"
+                    placeholder="Email"
                     placeholderTextColor="#808080"
-                    onChangeText={(val) => setContact(val)}
+                    onChangeText={(val) => setEmail(val)}
                   />
                 </View>
               </View>

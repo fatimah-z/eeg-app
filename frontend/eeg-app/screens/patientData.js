@@ -19,7 +19,7 @@ import AnimatedLoader from "react-native-animated-loader";
 const PatientData = ({navigation,route}) => {
   const eegFilesRef = firebase.firestore().collection("eegFiles");
   const [files, setFiles] = useState(null);
-  const [donwloading, setDownloading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [loading, setloading] = useState(false);
@@ -72,9 +72,8 @@ const PatientData = ({navigation,route}) => {
   const onSelect = () => {};
 
   const handleFile = (url, name) => {
-    setDownloading(true);
     axios
-      .get(url, { responseType: "blob" })
+      .post(`http://192.168.0.103:4000/uploadFile`, { url, name })
       .then((res) => {
         setDownloading(false);
         const downloadedFile = new File([res.data], name);
@@ -107,8 +106,7 @@ const PatientData = ({navigation,route}) => {
         //   });
       })
       .catch((err) => {
-        setDownloading(false);
-        alert(err);
+        console.log(err);
       });
   };
 
@@ -176,6 +174,7 @@ const PatientData = ({navigation,route}) => {
             >
               <View style={{ flex: 3 }}>
                 <Text>{item.name}</Text>
+                {downloading && <Text>Downloading...</Text>}
               </View>
               <View
                 style={{
@@ -186,9 +185,9 @@ const PatientData = ({navigation,route}) => {
                   justifyContent: "center",
                 }}
               >
-                <Pressable onPress={()=>{
-                  setfilename(item.name)
-                  handlepress(item.name)}}>
+                <Pressable
+                  onPress={() => handleFile(item.fileDownloadURL, item.name)}
+                >
                   <Text style={{ color: "grey" }}>Select</Text>
                 </Pressable>
               </View>
