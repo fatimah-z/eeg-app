@@ -44,7 +44,7 @@ export default function App() {
 
     let message = messages[0].text;
     axios
-      .get(`https://secret-waters-04346.herokuapp.com?msg=${message}`)
+      .get(`https://76d6-39-43-137-233.eu.ngrok.io?msg=${message}`)
       .then((result) => {
         sendBotResponse(result?.data?.response);
       })

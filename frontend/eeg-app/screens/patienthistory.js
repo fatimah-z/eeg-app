@@ -24,33 +24,48 @@ import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 
 export default function App({ navigation, route }) {
+  console.log(
+    "PARAMS: ",
+    route.params
+    // new Date(
+    //   firebase.firestore.Timestamp.fromDate(route.params.dateOfBirth.date)
+    // )
+  );
   const useremail = firebase.auth().currentUser.email;
-  const [name, setName] = useState("");
-  const [Email, setEmail] = useState("");
-  const [gender, setGender] = useState("");
-  const [head, setHead] = useState("");
-  const [parental, setParental] = useState("");
-  const [genatic, setGenatic] = useState("");
-  const [genderIndex, setGenderIndex] = useState(0);
-  const [headIndex, setHeadIndex] = useState(0);
-  const [parentalIndex, setParentalIndex] = useState(0);
-  const [geneticIndex, setGeneticIndex] = useState(0);
+  const [name, setName] = useState(route?.params?.name ?? "");
+  const [Email, setEmail] = useState(route?.params?.email ?? "");
+  const [gender, setGender] = useState(route?.params?.gender ?? "");
+  const [head, setHead] = useState(route?.params?.headInjury ?? "");
+  const [parental, setParental] = useState(route?.params?.dengue ?? "");
+  const [genatic, setGenatic] = useState(route?.params?.genaticInfluence ?? "");
+  const [genderIndex, setGenderIndex] = useState(
+    gender == "other" ? 2 : gender == "female" ? 1 : 0
+  );
+  const [headIndex, setHeadIndex] = useState(head == "no" ? 1 : 0);
+  const [parentalIndex, setParentalIndex] = useState(parental == "no" ? 1 : 0);
+  const [geneticIndex, setGeneticIndex] = useState(genatic == "no" ? 1 : 0);
   const [boolVal, setBoolval] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(
+    route?.params?.dateOfBirth
+      ? new Date(route?.params?.dateOfBirth.seconds * 1000)
+      : new Date()
+  );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const onSubmit = () => {
-    console.log(name);
-    console.log(Email);
-    console.log(gender);
-    console.log(head);
-    console.log(parental);
-    console.log(genatic);
-    console.log(genderIndex);
-    console.log(headIndex);
-    console.log(parentalIndex);
-    console.log(geneticIndex);
-    // console.log(route.params.getEmail);
-    console.log(date);
+    var regName = /^[a-zA-Z]+ [a-zA-Z]+$/;
+    if (name == "") {
+      alert("Please Fill All Fields");
+      return;
+    } else if (Email == "") {
+      alert("Please Fill All Fields");
+      return;
+    } else if (regName.test(name)) {
+      alert(" Please Enter Valid Name");
+      return;
+    } else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(Email)) {
+      alert("Please Enter Valid Email");
+      return;
+    }
 
     if (route.params.boolVar == true) {
       console.log("hello");
@@ -180,6 +195,7 @@ export default function App({ navigation, route }) {
                 <View style={styles.namefields}>
                   <TextInput
                     color="#000000"
+                    value={name}
                     placeholder="Full Name"
                     cursorColor="grey"
                     placeholderTextColor="#808080"
@@ -192,6 +208,7 @@ export default function App({ navigation, route }) {
                   <TextInput
                     color="#000000"
                     cursorColor="grey"
+                    value={Email}
                     placeholder="Email"
                     placeholderTextColor="#808080"
                     onChangeText={(val) => setEmail(val)}

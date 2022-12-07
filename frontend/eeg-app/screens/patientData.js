@@ -13,11 +13,17 @@ import {
   Pressable,
 } from "react-native";
 import { firebase } from "../configauth";
+import db from "../config";
 import Background from "../assets/login.jpg";
 import axios from "axios";
-import AnimatedLoader from "react-native-animated-loader";
-const PatientData = ({navigation,route}) => {
-  const eegFilesRef = firebase.firestore().collection("eegFiles");
+import { collection, query, where, getDocs } from "firebase/firestore";
+
+const PatientData = ({ route, navigation }) => {
+  const eegFilesRef = firebase.firestore();
+  const q = query(
+    collection(eegFilesRef, "eegFiles"),
+    where("patientData.email", "==", route.params.email)
+  );
   const [files, setFiles] = useState(null);
   const [downloading, setDownloading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -65,31 +71,28 @@ const PatientData = ({navigation,route}) => {
     // route.params.name
     }
     eegFilesRef.get().then((result) => {
+    async function fetchData() {
+      const querySnapshot = await getDocs(q);
       const allFiles = [];
-      result.forEach((file) => {
-        allFiles.push(file.data());
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id);
+        allFiles.push(doc.id);
       });
       setFiles(allFiles);
-    });
-  }, [data]);
-  const onSelect = async (url, name) => {
-    try{
-      const response = await fetch("http://192.168.43.137:4000/load", {
-       method: "POST",
-       body: JSON.stringify({ url:url, name:name })
-      })
-      .then((res)=>{
-
-        console.log(res.data);
-          setData(res.data)
-      })
     }
-    catch(err){
-      setDownloading(false);
-        alert(err);
-        console.log(err);
-    }
-  };
+    fetchData();
+  })
+}, [data]);
+  
+      // eegFilesRef.get().then((result) => {
+      //   const allFiles = [];
+      //   result.forEach((file) => {
+      //     allFiles.push(file.data());
+      //   });
+      //   setFiles(allFiles);
+      // });
+  const onSelect = () => {};
 
   const handleFile = (url, name) => {
     setfilename(name)
@@ -137,13 +140,13 @@ const PatientData = ({navigation,route}) => {
       });
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => handleFile(item.fileDownloadURL, item.name)}
-    >
-      <Text>{item.name}</Text>
-    </TouchableOpacity>
-  );
+  // const renderItem = ({ item }) => (
+  //   <TouchableOpacity
+  //     onPress={() => handleFile(item.fileDownloadURL, item.name)}
+  //   >
+  //     <Text>{item.name}</Text>
+  //   </TouchableOpacity>
+  // );
   return (
     <View>
       {loading?(
@@ -186,7 +189,7 @@ const PatientData = ({navigation,route}) => {
           style={{ marginTop: 20 }}
           data={files}
           numColumns={1}
-          keyExtractor={(item, index) => index}
+          // keyExtractor={(item, index) => index}
           renderItem={({ item }) => (
             <View
               style={{
@@ -200,7 +203,7 @@ const PatientData = ({navigation,route}) => {
               }}
             >
               <View style={{ flex: 3 }}>
-                <Text>{item.name}</Text>
+                <Text>{item}</Text>
                 {downloading && <Text>Downloading...</Text>}
               </View>
               <View

@@ -70,14 +70,14 @@ function App() {
   function ProfileStackScreens() {
     return (
       <ProfileStack.Navigator>
-        {/* <ProfileStack.Screen
-          name="patientData"
-          component={patientData}
-          options={{ headerStyle: { height: 0 } }}
-        /> */}
         <ProfileStack.Screen
           name="profileScreen"
           component={Profile}
+          options={{ headerStyle: { height: 0 } }}
+        /> 
+        <ProfileStack.Screen
+          name="patientData"
+          component={patientData}
           options={{ headerStyle: { height: 0 } }}
         />
         <ProfileStack.Screen

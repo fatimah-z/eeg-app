@@ -101,14 +101,18 @@ export default ImportData = ({ route, navigation }) => {
     let result = await DocumentPicker.getDocumentAsync({});
 
     if (!result.cancelled) {
-      setselectedImage(true);
-      setselectedFileName(result.name);
-      // setselectedFile(File_)
-      setselectedurl(result.uri)
-      const r = await fetch(result.uri);
-      r.blob().then((b) => {
-        setBlobFile(b);
-      });
+      if (result.name.endsWith(".edf")) {
+        setselectedImage(true);
+        setselectedFileName(result.name);
+        // setselectedFile(File_)
+        setselectedurl(result.uri)
+        const r = await fetch(result.uri);
+        r.blob().then((b) => {
+          setBlobFile(b);
+        });
+      } else {
+        alert("Please Select EDF File");
+      }
     }
   };
   const uploadFile = () => {
