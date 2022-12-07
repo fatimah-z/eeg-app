@@ -23,36 +23,38 @@ const PatientData = ({navigation,route}) => {
   const [uploading, setUploading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [loading, setloading] = useState(false);
-  const [filename, setfilename] = useState(false);
+  const [filename, setfilename] = useState();
   const[data,setData] = useState()
-  const handlepress = async(name)=>{
-    try {
-      // setfilename(name);
-      setloading(true);
-      const response = await fetch("http://192.168.43.137:4000/load", {
-        method: "GET"
-        // body:{'file': selectedFile,'fileName': selectedFileName},
-        // body: selectedFileName,
-        // headers: {
-        //   'Content-Type': 'multipart/form-data',
-        // },
-      });
-      const resp = await response.json();
-      console.log(resp.data);
-      setData(resp.data);
-      console.log(data);
-    } catch (error) {
-    } finally {
 
-      // if (data) {
-      //   setloading(false);
-      //   navigation.navigate("ViewAnalysis", {resp_data:data,filename:name,pname:route.params.name});
-      //   }
-    }
-    // setloading(false);
-    // navigation.navigate("ViewAnalysis", { resp_data: data,filename:name,pname:route.params.name});
+  // const handlepress = async(name)=>{
+  //   try {
+  //     setfilename(name);
+  //     setloading(true);
+  //     const response = await fetch("http://192.168.43.137:4000/load", {
+  //       method: "GET"
+  //       // body:{'file': selectedFile,'fileName': selectedFileName},
+  //       // body: selectedFileName,
+  //       // headers: {
+  //       //   'Content-Type': 'multipart/form-data',
+  //       // },
+  //     });
+  //     const resp = await response.json();
+  //     console.log(resp.data);
+  //     setData(resp.data);
+  //     console.log(data);
+  //   } catch (error) {
+  //   } finally {
+
+  //     // if (data) {
+  //     //   setloading(false);
+  //     //   navigation.navigate("ViewAnalysis", {resp_data:data,filename:name,pname:route.params.name});
+  //     //   }
+  //   }
+  //   // setloading(false);
+  //   // navigation.navigate("ViewAnalysis", { resp_data: data,filename:name,pname:route.params.name});
     
-  }
+  // }
+  
   useEffect(() => {
     setInterval(() => {
       setVisible(!visible);
@@ -60,6 +62,7 @@ const PatientData = ({navigation,route}) => {
     if (data) {
     setloading(false);
     navigation.navigate("ViewAnalysis", {resp_data: data,filename:filename,pname:route.params.name});
+    // route.params.name
     }
     eegFilesRef.get().then((result) => {
       const allFiles = [];
@@ -69,32 +72,52 @@ const PatientData = ({navigation,route}) => {
       setFiles(allFiles);
     });
   }, [data]);
-  const onSelect = () => {};
+  const onSelect = async (url, name) => {
+    try{
+      const response = await fetch("http://192.168.43.137:4000/load", {
+       method: "POST",
+       body: JSON.stringify({ url:url, name:name })
+      })
+      .then((res)=>{
+
+        console.log(res.data);
+          setData(res.data)
+      })
+    }
+    catch(err){
+      setDownloading(false);
+        alert(err);
+        console.log(err);
+    }
+  };
 
   const handleFile = (url, name) => {
+    setfilename(name)
     axios
-      .post(`http://192.168.0.103:4000/uploadFile`, { url, name })
+      // .post(`http://192.168.0.103:4000/uploadFile`, { url, name })
+      .post(`http://192.168.43.137:4000/load`,{ url:url, name:name })
       .then((res) => {
-        setDownloading(false);
-        const downloadedFile = new File([res.data], name);
+        // setDownloading(false);
+        // const downloadedFile = new File([res.data], name);
         // console.log(url);
         // const formData = new FormData();
         // formData.append("file", downloadedFile);
 
-        axios({
-          method: "POST",
-          url: `http://192.168.43.137/uploadFile`,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          data: downloadedFile,
-        })
-          .then((res) => {
-            console.log(res.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        // axios({
+        //   method: "POST",
+        //   url: `http://192.168.43.137/uploadFile`,
+        //   headers: {
+        //     "Content-Type": "multipart/form-data",
+        //   },
+        //   data: downloadedFile,
+        // })
+        //   .then((res) => {
+        //     console.log(res.data);
+        //     setData(res.data);
+        //   })
+        //   .catch((err) => {
+        //     console.log(err);
+        //   });
 
         // axios
         //   .post("http://192.168.0.104:4000/uploadFile", formData)
@@ -104,8 +127,12 @@ const PatientData = ({navigation,route}) => {
         //   .catch((err) => {
         //     console.log(err);
         //   });
+        console.log(res.data.data);
+        setData(res.data.data)
       })
       .catch((err) => {
+        setDownloading(false);
+        alert(err);
         console.log(err);
       });
   };

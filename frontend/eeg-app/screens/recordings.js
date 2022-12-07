@@ -6,25 +6,11 @@ import {firebase} from "../firebase";
 import { getStorage, ref, listAll,getDownloadURL,getBlob } from "firebase/storage";
 import Background from "../assets/background.jpg";
 import AnimatedLoader from "react-native-animated-loader";
+import axios from "axios";
 
 export default function App({navigation,route}){
   
-  const DATA = [
-    {
-      id:'1',
-      title:'rawdata.csv'
-    },
-    {
-      id:'2',
-      title:'patient1.csv'
-    },
-    {
-      id:'3',
-      title:'patient2.csv'
-    }
-  ]
-  
-  const Item = ({ title }) => (
+  const Item = ({ title,url }) => (
     <View
               style={{
                 padding: 10,
@@ -41,7 +27,7 @@ export default function App({navigation,route}){
               </View>
               <View>
               <Pressable
-              onPress={()=>{onAnalyze(title)}}
+              onPress={()=>{onAnalyze(title,url)}}
               >
                <Text style={{ color: "#557C74" }}>Generate Report</Text> 
               </Pressable>
@@ -58,23 +44,27 @@ export default function App({navigation,route}){
     </View>
   );
   const renderItem = ({ item }) => (
-    <Item title={item.title} />
+    <Item title={item.title} url={item.url} />
   );
     const[items,setitems]= useState([]);
     const [data, setData] = useState();
     const [visible, setVisible] = useState(false);
     const [loading, setloading] = useState(false);
-    const onAnalyze = async (filename) => {
+
+    const onAnalyze = async (filename,url) => {
       setloading(true);
       try {
         const response = await fetch("http://192.168.43.137:4000/rawDataModel", {
-          method: "GET",
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({"filename":filename,"url":url})
         });
         const resp = await response.json();
         console.log(resp.data);
         setData(resp.data);
         console.log(data);
       } catch (error) {
+        alert(error)
       } finally {
         setloading(false);
         if (data) {

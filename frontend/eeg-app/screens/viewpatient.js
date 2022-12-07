@@ -104,8 +104,8 @@ const ViewPatient = ({ route, navigation }) => {
                 <Pressable
                   onPress={() =>
                     navigation.navigate("patientData", {
-                      getEmail: email,
-                      boolVar: true,
+                      // getEmail: email,
+                      // boolVar: true,
                       name: item.patientName,
                     })
                   }

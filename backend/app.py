@@ -18,6 +18,9 @@ from flask import request
 from model_files import preprocess
 from model_files import singlefile_pred
 from google.cloud import storage
+from multiprocessing import Process, Queue
+import requests
+
 # from config import storage_
 
 load_dotenv()
@@ -25,11 +28,13 @@ load_dotenv()
 RAW_BRAINVISION_PATH = os.getenv('RAW_BRAINVISION_PATH')
 HOST =os.getenv('HOST')
 app = Flask(__name__)
+app.app_context().push()
 
 UPLOAD_FOLDER = 'C:/Users/Fatima/Documents/GitHub/eeg-app/backend/fileuploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
- 
 CORS(app)
+
+# target = 'C:/Users/Fatima/Documents/GitHub/eeg-app/backend/fileuploads/00003306_s001_t001 (1).edf'
 
 @app.route('/view', methods=['GET'])
 def getEEG():
@@ -113,9 +118,24 @@ def getEEG():
 #     conf=float("{:.2f}".format(conf))
 #     return jsonify({'data':conf})
 
-@app.route('/load', methods=['GET'])
+@app.route('/load', methods=['POST'])
 def load_model():
-    target = 'C:/Users/Fatima/Documents/GitHub/eeg-app/backend/fileuploads'
+    data = request.get_json()
+    print(data)
+    url = data['url']
+    name = data['name']
+    # name = '00003306_s001_t001.edf'
+    print("url"+url)
+    print("name"+name)
+    # target = 'C:/Users/Fatima/Documents/GitHub/eeg-app/backend/fileuploads/'
+    # if not os.path.isdir(target):
+    #     os.mkdir(target)
+    target = 'C:/Users/Fatima/Documents/GitHub/eeg-app/backend/fileuploads/'+name
+    
+    # r = requests.get(url,stream=True)
+    # with open(target,'wb') as f:
+    #     f.write(r.content)
+
     # target=os.path.join(UPLOAD_FOLDER,'edf')
     # if not os.path.isdir(target):
     #     os.mkdir(target)
@@ -127,29 +147,46 @@ def load_model():
     # print('filename',filename)
     # destination="/".join([target,filename])
     # file.save(target)
-    subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/preprocess.py'])
-    conf = (preprocess.seiz_len/ preprocess.total_length)*100
+
+    # app.config['target'] = target
+    # with app.app_context():
+    # subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/preprocess.py'])
+    # result=subprocess.run(preprocess.run(target_file=target))
+    seiz_len,total_length=preprocess.run(target_file=target)
+    conf = (seiz_len/total_length)*100
     conf=float("{:.2f}".format(conf))
     return jsonify({'data':conf})
+    # return jsonify({'data':0.0})
 
-@app.route('/uploadFile',methods=['GET'] )
-def upload_file():
-    # # url = request.get_json('url',force=True)
-    # bucket_name = "test-3fc13"
-    # source_blob_name = "2F00003306_s001_t001.edf"
-    # storage_client = storage.Client(storage_)
-    # bucket = storage_client.bucket(bucket_name)
-    # blob = bucket.blob(source_blob_name)
-    # destination_file_name='C:/Users/Fatima/Documents/GitHub/eeg-app/backend/uploads/'
-    # blob.download_to_filename(destination_file_name)
-    url='https://firebasestorage.googleapis.com/v0/b/test-3fc13.appspot.com/o/testFiles%2F00003306_s001_t001.edf?alt=media&token=c3a0e1d3-d75f-4ecf-a516-3fa251adf27f'
-    return jsonify({'url': url})
-
-
-@app.route('/rawDataModel',methods=['GET','POST'])
+@app.route('/rawDataModel',methods=['POST'])
 def load_model_():
-    subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/singlefile_pred.py'])
-    threshold = singlefile_pred.pc
+    data = request.get_json()
+    print(data)
+    name = data['filename']
+    url = data['url']
+    print("url"+url)
+    print("name"+name)
+
+    target = 'C:/Users/Fatima/Documents/GitHub/eeg-app/backend/csvFileUploads'
+    if not os.path.isdir(target):
+        os.mkdir(target)
+
+    r = requests.get(url)
+    with open(target+'/'+name,'wb') as f:
+        f.write(r.content)
+
+    target =target+'/'+name
+    # print('file_n'+file_n)
+    # subprocess.call(['python','/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/singlefile_pred.py'])
+    result=singlefile_pred.run_(target_file=target)
+    # subprocess.run(singlefile_pred.run_(target_file=target))  
+    # result=subprocess.check_output(singlefile_pred.run_(file_n))
+    # queue = Queue()
+    # p = Process(target=singlefile_pred.run_, args=(file_n))
+    # p.start()
+    # p.join()
+    # threshold = singlefile_pred.pc
+    threshold = result
     return jsonify({'data':threshold})
     # return jsonify({'data':'data'})
 

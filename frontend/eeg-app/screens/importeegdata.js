@@ -22,6 +22,7 @@ import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { firebase } from "../configauth";
 import Tile from "../components/Tile";
 import { AntDesign } from "@expo/vector-icons";
+import axios from "axios";
 
 export default ImportData = ({ route, navigation }) => {
   const email = firebase.auth().currentUser.email;
@@ -34,6 +35,7 @@ export default ImportData = ({ route, navigation }) => {
   const [visible, setVisible] = useState(false);
   const [loading, setloading] = useState(false);
   const [data, setData] = useState();
+  const [selectedurl,setselectedurl] = useState();
   useEffect(() => {
     setInterval(() => {
       setVisible(!visible);
@@ -68,22 +70,31 @@ export default ImportData = ({ route, navigation }) => {
     // const data = new FormData()
     // data.append('file',selectedFile,'file')
     // data.append('fileName',selectedFileName)
-    try {
-      const response = await fetch("http://192.168.43.137:4000/load", {
-        method: "GET",
-        // body:{'file': selectedFile,'fileName': selectedFileName},
-        // body: selectedFileName,
-        // headers: {
-        //   'Content-Type': 'multipart/form-data',
-        // },
+    // try {
+    //   const response = await fetch("http://192.168.43.137:4000/load", {
+    //     method: "GET",
+    //     // body:{'file': selectedFile,'fileName': selectedFileName},
+    //     // body: selectedFileName,
+    //     // headers: {
+    //     //   'Content-Type': 'multipart/form-data',
+    //     // },
+    //   });
+    //   const resp = await response.json();
+    //   console.log(resp.data);
+    //   setData(resp.data);
+    //   console.log(data);
+    // } catch (error) {
+    // } finally {
+    // }
+    axios
+      // .post(`http://192.168.0.103:4000/uploadFile`, { url, name })
+      .post(`http://192.168.43.137:4000/load`,{ url:selectedurl, name:selectedFileName })
+      .then((res)=>{
+        console.log(resp.data.data);
+        setData(resp.data.data);
+
+
       });
-      const resp = await response.json();
-      console.log(resp.data);
-      setData(resp.data);
-      console.log(data);
-    } catch (error) {
-    } finally {
-    }
   };
 
   const openGallery = async () => {
@@ -93,6 +104,7 @@ export default ImportData = ({ route, navigation }) => {
       setselectedImage(true);
       setselectedFileName(result.name);
       // setselectedFile(File_)
+      setselectedurl(result.uri)
       const r = await fetch(result.uri);
       r.blob().then((b) => {
         setBlobFile(b);

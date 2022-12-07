@@ -28,6 +28,8 @@ import numpy as np
 import pyedflib
 from sklearn.preprocessing import StandardScaler
 from scipy import signal
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import keras
@@ -37,365 +39,378 @@ from keras.layers import Conv1D, Input
 from keras.backend import clear_session
 from keras.layers import Flatten, GlobalAveragePooling1D, GlobalMaxPooling1D
 from keras.layers import Dense
+from flask import current_app, app
 
+import subprocess
 # %matplotlib inline
-
 import h5py
-ch_list1=[]
-# with h5py.File('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/TUH_filt_new4.hdf5','r') as hdf:
-with h5py.File('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/TUH_filt_new4.hdf5','r') as hdf: 
-  baseitems = list(hdf.items())
-  # print(baseitems)
-  g1 = hdf.get(baseitems[0][0])
-  g1_items= list(g1.items())
-  # print(g1_items)
-  ch_list = np.array(g1.get(g1_items[2][0]))
-  # print(ch_list)
-  # ch_list1=[]
-  for element in ch_list:
-    # print(element)
-    # np.append(ch_list1,element.decode('utf-8'),axis=)
-    ch_list1.append(element.decode('utf-8'))
-  # print(ch_list1)
+# from app import target
 
-def data_load(data_file, selected_channels=[]):
+def run(target_file):
+  print("target_file"+target_file)
+  # target_file = 'C:/Users/Fatima/Documents/GitHub/eeg-app/node-test-app/uploads/00003306_s001_t001 (1).edf'
+  ch_list1=[]
+  # with h5py.File('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/TUH_filt_new4.hdf5','r') as hdf:
+  with h5py.File('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/TUH_filt_new4.hdf5','r') as hdf: 
+    baseitems = list(hdf.items())
+    # print(baseitems)
+    g1 = hdf.get(baseitems[0][0])
+    g1_items= list(g1.items())
+    # print(g1_items)
+    ch_list = np.array(g1.get(g1_items[2][0]))
+    # print(ch_list)
+    # ch_list1=[]
+    for element in ch_list:
+      # print(element)
+      # np.append(ch_list1,element.decode('utf-8'),axis=)
+      ch_list1.append(element.decode('utf-8'))
+    # print(ch_list1)
 
-    try:
-        # use the reader to get an EdfReader file
-        f = pyedflib.EdfReader(data_file)
+  def data_load(data_file, selected_channels=[]):
 
-        # get the names of the signals
-        channel_names = f.getSignalLabels()
-        # print('channel_names',channel_names)
-        # get the sampling frequencies of each signal
-        channel_freq = f.getSampleFrequencies()
-        
-        # get a list of the EEG channels
-        if len(selected_channels) == 0:
-            selected_channels = channel_names
+      try:
+          # use the reader to get an EdfReader file
+          f = pyedflib.EdfReader(data_file)
 
-        # make an empty file of 0's
-        sigbufs = np.zeros((f.getNSamples()[0],len(selected_channels)))
-        # for each of the channels in the selected channels
-        for i, channel in enumerate(selected_channels):
-        
-            try:
-              # add the channel data into the array
-              sigbufs[:, i] = f.readSignal(channel_names.index(channel))
-            
-            except:
-              ValueError
-              # This happens if the sampling rate of that channel is 
-              # different to the others.
-              # For simplicity, in this case we just make it na.
-              sigbufs[:, i] = np.nan
+          # get the names of the signals
+          channel_names = f.getSignalLabels()
+          # print('channel_names',channel_names)
+          # get the sampling frequencies of each signal
+          channel_freq = f.getSampleFrequencies()
+          
+          # get a list of the EEG channels
+          if len(selected_channels) == 0:
+              selected_channels = channel_names
 
-        # turn to a pandas df and save a little space
-        df = pd.DataFrame(sigbufs, columns = selected_channels).astype('float32')
+          # make an empty file of 0's
+          sigbufs = np.zeros((f.getNSamples()[0],len(selected_channels)))
+          # for each of the channels in the selected channels
+          for i, channel in enumerate(selected_channels):
+          
+              try:
+                # add the channel data into the array
+                sigbufs[:, i] = f.readSignal(channel_names.index(channel))
+              
+              except:
+                ValueError
+                # This happens if the sampling rate of that channel is 
+                # different to the others.
+                # For simplicity, in this case we just make it na.
+                sigbufs[:, i] = np.nan
 
-        # get equally increasing numbers upto the length of the data depending
-        # on the length of the data divided by the sampling frequency
-        index_increase = np.linspace(0,
-                                      len(df)/channel_freq[0],
-                                      len(df), endpoint=False)
+          # turn to a pandas df and save a little space
+          df = pd.DataFrame(sigbufs, columns = selected_channels).astype('float32')
 
-        # round these to the lowest nearest decimal to get the seconds
-        seconds = np.floor(index_increase).astype('uint16')
+          # get equally increasing numbers upto the length of the data depending
+          # on the length of the data divided by the sampling frequency
+          index_increase = np.linspace(0,
+                                        len(df)/channel_freq[0],
+                                        len(df), endpoint=False)
 
-        seconds = index_increase
-        
-        # make a column the timestamp
-        df['Time'] = seconds
+          # round these to the lowest nearest decimal to get the seconds
+          seconds = np.floor(index_increase).astype('uint16')
 
-        # make the time stamp the index
-        df = df.set_index('Time')
+          seconds = index_increase
+          
+          # make a column the timestamp
+          df['Time'] = seconds
 
-        # name the columns as channel
-        df.columns.name = 'Channel'
+          # make the time stamp the index
+          df = df.set_index('Time')
 
-        return df, channel_freq[0]
+          # name the columns as channel
+          df.columns.name = 'Channel'
 
-    except OSError as error:
-        print('Error '+data_file+': '+str(error))
-        return pd.DataFrame(), None
-    except ValueError as error:
-        print('Error '+data_file+': '+str(error))
-        return pd.DataFrame(), None
+          return df, channel_freq[0]
 
-channel_keeps = ch_list1
-regex = re.compile('30|PHOTIC|EKG|PG')
-channel_keeps = [i for i in channel_keeps if not regex.search(i)]
-raw_data, freq = data_load('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00003306_s001_t001.edf', channel_keeps)
-# raw_data, freq = data_load('https://firebasestorage.googleapis.com/v0/b/test-3fc13.appspot.com/o/testFiles%2F00003306_s001_t001.edf?alt=media&token=c3a0e1d3-d75f-4ecf-a516-3fa251adf27f', channel_keeps)
-# 
-# raw_data, freq = data_load('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00001984_s001_t001.edf', channel_keeps)
-# print(raw_data.shape)
-# print(raw_data.columns)
-# display(raw_data)
+      except OSError as error:
+          print('Error '+data_file+': '+str(error))
+          return pd.DataFrame(), None
+      except ValueError as error:
+          print('Error '+data_file+': '+str(error))
+          return pd.DataFrame(), None
 
-def create_events(file_name, df, code = None):
+  channel_keeps = ch_list1
+  regex = re.compile('30|PHOTIC|EKG|PG')
+  channel_keeps = [i for i in channel_keeps if not regex.search(i)]
 
-    data_y = pd.Series(index=df.index)
-    data_y.name = 'Events'
+  # with current_app.app_context:
+  #   current_app.app_context().push()
+  # path_ = current_app.config['target']
+  # path_ = subprocess.target
+  # raw_data, freq = data_load('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00003306_s001_t001.edf', channel_keeps)
+  raw_data, freq = data_load(target_file, channel_keeps)
+  # raw_data, freq = data_load('https://firebasestorage.googleapis.com/v0/b/test-3fc13.appspot.com/o/testFiles%2F00003306_s001_t001.edf?alt=media&token=c3a0e1d3-d75f-4ecf-a516-3fa251adf27f', channel_keeps)
+  # 
+  # raw_data, freq = data_load('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00001984_s001_t001.edf', channel_keeps)
+  # print(raw_data.shape)
+  # print(raw_data.columns)
+  # display(raw_data)
 
-    events_tse = pd.read_csv(file_name, 
-                             skiprows=1,
-                             sep = ' ',
-                             header=None,
-                             names =['Start', 'End', 'Code', 'Certainty'])
+  # def create_events(file_name, df, code = None):
+
+  #     data_y = pd.Series(index=df.index)
+  #     data_y.name = 'Events'
+
+  #     events_tse = pd.read_csv(file_name, 
+  #                             skiprows=1,
+  #                             sep = ' ',
+  #                             header=None,
+  #                             names =['Start', 'End', 'Code', 'Certainty'])
+      
+  #     data_y = data_y.fillna('bckg')
+      
+  #     for pos, row in events_tse.iterrows():
+  #         # if you want to manually set the code
+  #         if code != None:
+  #           if row['Code'] == code:
+  #               data_y[row['Start']:row['End']] = code
+  #         # let it be the code it is in the event file
+  #         else:
+  #           data_y[row['Start']:row['End']] = row['Code']
+
+  #     return data_y
+
+  # raw_events = create_events(DOWNLOAD_DIR+'/'+file_ID+'.tse', raw_data)
+  # raw_events = create_events('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00003306_s001_t001.tse', raw_data)
+  # raw_events = create_events('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00001984_s001_t001.tse', raw_data)
+  # print(raw_events )
+
+  # def window_y(events, window_size, overlap, target=None, baseline=None):
+      
+  #   # window the data so each row is another epoch
+  #   events_windowed = window(events, w = window_size, o = overlap, copy = True)
     
-    data_y = data_y.fillna('bckg')
+  #   if target:
+  #     # turn to array of bools if seizure in the
+  #     # windowed data
+  #     bools = events_windowed == target
+  #     # are there any seizure seconds in the data?
+  #     data_y = np.any(bools,axis=1)
+  #     # turn to 0's and 1's
+  #     data_y = data_y.astype(int)
+  #     # expand the dimensions so running down one column
+  #     data_y = np.expand_dims(data_y, axis=1)
     
-    for pos, row in events_tse.iterrows():
-        # if you want to manually set the code
-        if code != None:
-          if row['Code'] == code:
-              data_y[row['Start']:row['End']] = code
-        # let it be the code it is in the event file
+  #   elif baseline:
+  #     # # replace all baseline labels to nan
+  #     # data_y = pd.DataFrame(events_windowed).replace(baseline, np.nan)
+  #     # # get the most common other than baseline
+  #     # data_y = data_y.mode(1)
+  #     # # change nan back to baseline class
+  #     # data_y = data_y.fillna(baseline).values
+  #     # # if there was nothing but baseline there will be an empty array
+  #     # if data_y.size == 0:
+  #     #     data_y = np.array([baseline]*data_y.shape[0])
+  #     #     data_y = np.expand_dims(data_y, -1)
+
+  #     data_y = pd.DataFrame(events_windowed)
+    
+  #   else:
+  #     # get the value most frequent in the window
+  #     data_y = pd.DataFrame(events_windowed).mode(1).values
+
+  #   return data_y
+
+  def downsample(data_x,freq):
+      if freq > 256:
+          if freq >= 1000:
+            subsample = 4
+          else:
+            subsample = 2
+
+          freq = freq/subsample
+          data_x = data_x[::subsample]
+          # data_y = data_y[::subsample]
+
+      # return data_x, data_y, freq
+      return data_x, freq
+
+  def window(a, w, o, copy = False):
+    # if there is no window to be applied
+    if w == None:
+        view = np.expand_dims(a.T, axis=0)
+
+    # otherwise...
+    else:
+        sh = (a.size - w + 1, w)
+        ser = pd.Series(a)
+        narr = ser.to_numpy()
+        # st = a.strides * 2
+        st= narr.strides * 2
+        if o:
+            view = np.lib.stride_tricks.as_strided(a, strides = st, shape = sh)[0::o]
         else:
-          data_y[row['Start']:row['End']] = row['Code']
+            view = np.lib.stride_tricks.as_strided(a, strides = st, shape = sh)[0::w]
+    if copy:
+        return view.copy()
+    else:
+        return view
+      
+  def window_x(data, window_size, overlap):
+      
+    for i, column in enumerate(data.columns):
+      # print('i,col',i,column)
 
-    return data_y
+      # window the data so each row is another epoch
+      channel_windowed = window(data[column], w = window_size, o = overlap, copy = True)
+      channel_windowed = np.reshape(channel_windowed, (*channel_windowed.shape, -1))
 
-# raw_events = create_events(DOWNLOAD_DIR+'/'+file_ID+'.tse', raw_data)
-# raw_events = create_events('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00003306_s001_t001.tse', raw_data)
-# raw_events = create_events('C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/s001_2006_10_11/00001984_s001_t001.tse', raw_data)
-# print(raw_events )
-
-def window_y(events, window_size, overlap, target=None, baseline=None):
-    
-  # window the data so each row is another epoch
-  events_windowed = window(events, w = window_size, o = overlap, copy = True)
-  
-  if target:
-    # turn to array of bools if seizure in the
-    # windowed data
-    bools = events_windowed == target
-    # are there any seizure seconds in the data?
-    data_y = np.any(bools,axis=1)
-    # turn to 0's and 1's
-    data_y = data_y.astype(int)
-    # expand the dimensions so running down one column
-    data_y = np.expand_dims(data_y, axis=1)
-  
-  elif baseline:
-    # # replace all baseline labels to nan
-    # data_y = pd.DataFrame(events_windowed).replace(baseline, np.nan)
-    # # get the most common other than baseline
-    # data_y = data_y.mode(1)
-    # # change nan back to baseline class
-    # data_y = data_y.fillna(baseline).values
-    # # if there was nothing but baseline there will be an empty array
-    # if data_y.size == 0:
-    #     data_y = np.array([baseline]*data_y.shape[0])
-    #     data_y = np.expand_dims(data_y, -1)
-
-    data_y = pd.DataFrame(events_windowed)
-  
-  else:
-    # get the value most frequent in the window
-    data_y = pd.DataFrame(events_windowed).mode(1).values
-
-  return data_y
-
-def downsample(data_x,freq):
-    if freq > 256:
-        if freq >= 1000:
-          subsample = 4
-        else:
-          subsample = 2
-
-        freq = freq/subsample
-        data_x = data_x[::subsample]
-        # data_y = data_y[::subsample]
-
-    # return data_x, data_y, freq
-    return data_x, freq
-
-def window(a, w, o, copy = False):
-  # if there is no window to be applied
-  if w == None:
-      view = np.expand_dims(a.T, axis=0)
-
-  # otherwise...
-  else:
-      sh = (a.size - w + 1, w)
-      ser = pd.Series(a)
-      narr = ser.to_numpy()
-      # st = a.strides * 2
-      st= narr.strides * 2
-      if o:
-          view = np.lib.stride_tricks.as_strided(a, strides = st, shape = sh)[0::o]
+      if i ==0:
+        windowed_data = channel_windowed
       else:
-          view = np.lib.stride_tricks.as_strided(a, strides = st, shape = sh)[0::w]
-  if copy:
-      return view.copy()
-  else:
-      return view
+        windowed_data = np.concatenate((windowed_data, channel_windowed), axis=-1)
     
-def window_x(data, window_size, overlap):
+    return windowed_data
+
+  # print(raw_data.values)
+  # print(raw_events.values)
+  down_x,down_freq = downsample(raw_data.values, freq)
+  # print('down_x',down_x.shape)
+  # print('down_y',down_y)
+  # print('down_x',down_freq)
+
+  window_size = 256*2
+  overlap = 256
+
+  b, a = signal.butter(4, [1/(down_freq/2), 30/(down_freq/2)], 'bandpass', analog=False)
+  # print('b',b)
+  # print('a',a)
+  # print('down_x.T',down_x.T)
+  filt_data = signal.filtfilt(b, a, down_x.T).T
+  # print(filt_data.shape)
+  # display(filt_data)
+
+  SS = StandardScaler()
+  scaled_data = SS.fit_transform(filt_data)
+  # print('scaled_data1',scaled_data)
+  # print('scaled_data1shape',scaled_data.shape)
+  # print('raw_data.columns',raw_data.columns)
+  # scaled_data = pd.DataFrame(scaled_data, columns = raw_data.columns, index = down_y)
+  scaled_data = pd.DataFrame(scaled_data, columns = raw_data.columns)
+  # scaled_data = pd.DataFrame(scaled_data, columns = raw_data.columns, index = raw_data.index)
+  # print('scaled_data',scaled_data)
+  # print('scaled_datashape',scaled_data.shape)
+  # display(scaled_data)
+
+  scaled_data = scaled_data.dropna()
+  # display(scaled_data)
+
+  def window_y1(data, window_size, overlap,data1):
+      
+    for i, column in enumerate(data1.columns):
+    #   print('i,col',i,column)
+
+      # window the data so each row is another epoch
+      channel_windowed = window(data, w = window_size, o = overlap, copy = True)
+      channel_windowed = np.reshape(channel_windowed, (*channel_windowed.shape, -1))
+
+      if i ==0:
+        windowed_data = channel_windowed
+      else:
+        windowed_data = np.concatenate((windowed_data, channel_windowed), axis=-1)
     
-  for i, column in enumerate(data.columns):
-    # print('i,col',i,column)
+    return windowed_data
 
-    # window the data so each row is another epoch
-    channel_windowed = window(data[column], w = window_size, o = overlap, copy = True)
-    channel_windowed = np.reshape(channel_windowed, (*channel_windowed.shape, -1))
+  data_x = window_x(scaled_data, window_size, overlap)
+  # data_y = window_y(scaled_data.index.values, window_size, overlap, target=None, 
+  #                         baseline=6)
+  # data_y = window_y(raw_data.index.values, window_size, overlap, target=None, 
+  #                         baseline=6)
 
-    if i ==0:
-      windowed_data = channel_windowed
+  data_y1 = window_y1(raw_data.index.values, window_size, overlap,scaled_data)
+
+  plt.plot(raw_data.index.values,raw_data)
+  plt.savefig('raw_graph')
+  plt.clf()
+
+  plt.plot(raw_data.index.values,scaled_data)
+  plt.savefig('scaled_graph')
+  plt.clf()
+
+  #-----------h5 Model File-----------------------
+  model = tf.keras.models.load_model("C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/CNN1D_Model.h5")
+  pr = model.predict(data_x)
+  labels = (pr > 0.5).astype(np.int)
+  #------------------------------------------------
+
+  # print(labels)
+  # print(labels.size)
+  # print(np.count_nonzero(labels))
+
+  def create_model( flatten=False):
+    clear_session()
+    model = Sequential()
+
+    # this just tells the model what input shape to expect
+    # model.add(Input(shape=input_shape[1:]))
+    for i in range(2):
+      model.add(Conv1D(filters=64,
+                      kernel_size=3,
+                      padding="same",
+                      activation='relu'))
+      
+    model.add(tf.keras.layers.MaxPooling1D(pool_size=3, 
+                        strides=2,   
+                        padding='same'))
+    
+    for i in range(2):
+      model.add(Conv1D(filters=128,
+                      kernel_size=3,
+                      padding="same",
+                      activation='relu'))
+    if flatten:
+      model.add(Flatten())
     else:
-      windowed_data = np.concatenate((windowed_data, channel_windowed), axis=-1)
-  
-  return windowed_data
+      model.add(GlobalAveragePooling1D())
 
-# print(raw_data.values)
-# print(raw_events.values)
-down_x,down_freq = downsample(raw_data.values, freq)
-# print('down_x',down_x.shape)
-# print('down_y',down_y)
-# print('down_x',down_freq)
+    model.add(Dense(units=64,
+                    activation='relu'))
 
-window_size = 256*2
-overlap = 256
+    model.add(Dense(units=1,
+                    activation='sigmoid'))
 
-b, a = signal.butter(4, [1/(down_freq/2), 30/(down_freq/2)], 'bandpass', analog=False)
-# print('b',b)
-# print('a',a)
-# print('down_x.T',down_x.T)
-filt_data = signal.filtfilt(b, a, down_x.T).T
-# print(filt_data.shape)
-# display(filt_data)
+    model.compile(optimizer=keras.optimizers.Adam(0.001),
+                  loss='binary_crossentropy',
+                  metrics=['accuracy', 'AUC', 'Recall', 'Precision'])
 
-SS = StandardScaler()
-scaled_data = SS.fit_transform(filt_data)
-# print('scaled_data1',scaled_data)
-# print('scaled_data1shape',scaled_data.shape)
-# print('raw_data.columns',raw_data.columns)
-# scaled_data = pd.DataFrame(scaled_data, columns = raw_data.columns, index = down_y)
-scaled_data = pd.DataFrame(scaled_data, columns = raw_data.columns)
-# scaled_data = pd.DataFrame(scaled_data, columns = raw_data.columns, index = raw_data.index)
-# print('scaled_data',scaled_data)
-# print('scaled_datashape',scaled_data.shape)
-# display(scaled_data)
+    return model
 
-scaled_data = scaled_data.dropna()
-# display(scaled_data)
-
-def window_y1(data, window_size, overlap,data1):
-    
-  for i, column in enumerate(data1.columns):
-  #   print('i,col',i,column)
-
-    # window the data so each row is another epoch
-    channel_windowed = window(data, w = window_size, o = overlap, copy = True)
-    channel_windowed = np.reshape(channel_windowed, (*channel_windowed.shape, -1))
-
-    if i ==0:
-      windowed_data = channel_windowed
+  model2 = create_model()
+  model2.load_weights("C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/CNN1D_Model.ckpt")
+  pr2= model2.predict(data_x)
+  labels2 = (pr2 > 0.5).astype(np.int)
+  # print(labels2)
+  # print(labels2.size)
+  # print(np.count_nonzero(labels2))
+  zeros=[]
+  nonzeros=[]
+  for i in range(len(labels2)):
+    if(labels2[i]== 0 ):
+      zeros.append(i)
     else:
-      windowed_data = np.concatenate((windowed_data, channel_windowed), axis=-1)
-  
-  return windowed_data
+      nonzeros.append(i)
 
-data_x = window_x(scaled_data, window_size, overlap)
-# data_y = window_y(scaled_data.index.values, window_size, overlap, target=None, 
-#                         baseline=6)
-# data_y = window_y(raw_data.index.values, window_size, overlap, target=None, 
-#                         baseline=6)
+  index_nonzero= nonzeros[0]
+  plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
+  plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep1')
+  plt.clf()
 
-data_y1 = window_y1(raw_data.index.values, window_size, overlap,scaled_data)
+  index_nonzero= nonzeros[1]
+  plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
+  plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep2')
+  plt.clf()
 
-plt.plot(raw_data.index.values,raw_data)
-plt.savefig('raw_graph')
-plt.clf()
+  index_nonzero= nonzeros[2]
+  plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
+  plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep3')
+  plt.clf()
 
-plt.plot(raw_data.index.values,scaled_data)
-plt.savefig('scaled_graph')
-plt.clf()
+  index_nonzero= nonzeros[4]
+  plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
+  plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep4')
+  plt.clf()
 
-#-----------h5 Model File-----------------------
-model = tf.keras.models.load_model("C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/CNN1D_Model.h5")
-pr = model.predict(data_x)
-labels = (pr > 0.5).astype(np.int)
-#------------------------------------------------
-
-# print(labels)
-# print(labels.size)
-# print(np.count_nonzero(labels))
-
-def create_model( flatten=False):
-  clear_session()
-  model = Sequential()
-
-  # this just tells the model what input shape to expect
-  # model.add(Input(shape=input_shape[1:]))
-  for i in range(2):
-    model.add(Conv1D(filters=64,
-                    kernel_size=3,
-                    padding="same",
-                    activation='relu'))
-    
-  model.add(tf.keras.layers.MaxPooling1D(pool_size=3, 
-                       strides=2,   
-                       padding='same'))
-  
-  for i in range(2):
-    model.add(Conv1D(filters=128,
-                    kernel_size=3,
-                    padding="same",
-                    activation='relu'))
-  if flatten:
-    model.add(Flatten())
-  else:
-    model.add(GlobalAveragePooling1D())
-
-  model.add(Dense(units=64,
-                  activation='relu'))
-
-  model.add(Dense(units=1,
-                  activation='sigmoid'))
-
-  model.compile(optimizer=keras.optimizers.Adam(0.001),
-                loss='binary_crossentropy',
-                metrics=['accuracy', 'AUC', 'Recall', 'Precision'])
-
-  return model
-
-model2 = create_model()
-model2.load_weights("C:/Users/Fatima/Documents/GitHub/eeg-app/backend/model_files/CNN1D_Model.ckpt")
-pr2= model2.predict(data_x)
-labels2 = (pr2 > 0.5).astype(np.int)
-# print(labels2)
-# print(labels2.size)
-# print(np.count_nonzero(labels2))
-zeros=[]
-nonzeros=[]
-for i in range(len(labels2)):
-  if(labels2[i]== 0 ):
-    zeros.append(i)
-  else:
-    nonzeros.append(i)
-
-index_nonzero= nonzeros[0]
-plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
-plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep1')
-plt.clf()
-
-index_nonzero= nonzeros[1]
-plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
-plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep2')
-plt.clf()
-
-index_nonzero= nonzeros[2]
-plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
-plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep3')
-plt.clf()
-
-index_nonzero= nonzeros[4]
-plt.plot(data_y1[index_nonzero],data_x[index_nonzero])
-plt.savefig('/Users/Fatima/Documents/GitHub/eeg-app/frontend/eeg-app/assets/ep4')
-plt.clf()
-
-total_length = len(zeros)
-seiz_len = len(nonzeros)
+  total_length = len(zeros)
+  seiz_len = len(nonzeros)
+  return seiz_len,total_length
