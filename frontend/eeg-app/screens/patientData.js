@@ -13,21 +13,38 @@ import {
   Pressable,
 } from "react-native";
 import { firebase } from "../configauth";
+import db from "../config";
 import Background from "../assets/login.jpg";
 import axios from "axios";
-const PatientData = () => {
-  const eegFilesRef = firebase.firestore().collection("eegFiles");
+import { collection, query, where, getDocs } from "firebase/firestore";
+const PatientData = ({ route, navigation }) => {
+  const eegFilesRef = firebase.firestore();
+  const q = query(
+    collection(eegFilesRef, "eegFiles"),
+    where("patientData.email", "==", route.params.email)
+  );
   const [files, setFiles] = useState(null);
   const [downloading, setDownloading] = useState(false);
   const [uploading, setUploading] = useState(false);
   useEffect(() => {
-    eegFilesRef.get().then((result) => {
+    async function fetchData() {
+      const querySnapshot = await getDocs(q);
       const allFiles = [];
-      result.forEach((file) => {
-        allFiles.push(file.data());
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id);
+        allFiles.push(doc.id);
       });
       setFiles(allFiles);
-    });
+      // eegFilesRef.get().then((result) => {
+      //   const allFiles = [];
+      //   result.forEach((file) => {
+      //     allFiles.push(file.data());
+      //   });
+      //   setFiles(allFiles);
+      // });
+    }
+    fetchData();
   }, []);
   const onSelect = () => {};
 
@@ -42,13 +59,13 @@ const PatientData = () => {
       });
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => handleFile(item.fileDownloadURL, item.name)}
-    >
-      <Text>{item.name}</Text>
-    </TouchableOpacity>
-  );
+  // const renderItem = ({ item }) => (
+  //   <TouchableOpacity
+  //     onPress={() => handleFile(item.fileDownloadURL, item.name)}
+  //   >
+  //     <Text>{item.name}</Text>
+  //   </TouchableOpacity>
+  // );
   return (
     <View>
       <ImageBackground
@@ -78,7 +95,7 @@ const PatientData = () => {
           style={{ marginTop: 20 }}
           data={files}
           numColumns={1}
-          keyExtractor={(item, index) => index}
+          // keyExtractor={(item, index) => index}
           renderItem={({ item }) => (
             <View
               style={{
@@ -92,7 +109,7 @@ const PatientData = () => {
               }}
             >
               <View style={{ flex: 3 }}>
-                <Text>{item.name}</Text>
+                <Text>{item}</Text>
                 {downloading && <Text>Downloading...</Text>}
               </View>
               <View

@@ -33,22 +33,30 @@ const ViewPatient = ({ route, navigation }) => {
   useEffect(() => {
     async function fetchData() {
       eegFilesRef.onSnapshot((querySnapshot) => {
-        const patients = [];
+        const tempPatients = [];
         querySnapshot.forEach((doc) => {
-          const { patientData, name } = doc.data();
-          if (patientData && patientData?.name) {
-            patients.push({
-              patientName: patientData.name,
-              id: doc.id,
-              name,
-            });
+          const { patientData, name, useremail } = doc.data();
+          if (useremail == email) {
+            if (patientData && patientData?.name) {
+              tempPatients.push({
+                patientName: patientData.name,
+                id: doc.id,
+                email: patientData.email,
+                name,
+                ...patientData,
+              });
+            }
           }
         });
-        setPatients(patients);
+        setPatients(getUniqueListBy(tempPatients, "email"));
       });
     }
     fetchData();
   }, []);
+
+  function getUniqueListBy(arr, key) {
+    return [...new Map(arr.map((item) => [item[key], item])).values()];
+  }
   return (
     <View>
       <ImageBackground
@@ -104,9 +112,8 @@ const ViewPatient = ({ route, navigation }) => {
                 <Pressable
                   onPress={() =>
                     navigation.navigate("patientData", {
-                      getEmail: email,
+                      ...item,
                       boolVar: true,
-                      name: item.patientName,
                     })
                   }
                 >
@@ -115,9 +122,8 @@ const ViewPatient = ({ route, navigation }) => {
                 <Pressable
                   onPress={() =>
                     navigation.navigate("patientHistoryScreen", {
-                      getEmail: email,
+                      ...item,
                       boolVar: true,
-                      name: item.patientName,
                     })
                   }
                 >

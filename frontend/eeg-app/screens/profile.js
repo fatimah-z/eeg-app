@@ -27,17 +27,20 @@ const Profile = ({ route, navigation }) => {
   const email = firebase?.auth()?.currentUser?.email;
   const [username, setUsername] = useState("");
   useEffect(() => {
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth()?.currentUser.uid)
-      .get()
-      .then((doc) => {
-        const data = doc.data();
-        if (data.username) {
-          setUsername(data.username);
-        }
-      });
+    async function fetchData() {
+      firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth()?.currentUser.uid)
+        .get()
+        .then((doc) => {
+          const data = doc.data();
+          if (data.username) {
+            setUsername(data.username);
+          }
+        });
+    }
+    fetchData();
   }, []);
   const uploadDataBtn = () => {
     navigation.navigate("newOrOldPatient", {
@@ -46,12 +49,13 @@ const Profile = ({ route, navigation }) => {
   };
   const viewPatientBtn = () => {
     navigation.navigate("viewPatient");
-  }
+  };
   const RecordedDataBtn = () => {
-    navigation.navigate("RecordingScreen", 
-    // {
-    //   getEmail: email,
-    // }
+    navigation.navigate(
+      "RecordingScreen"
+      // {
+      //   getEmail: email,
+      // }
     );
   };
   return (
@@ -82,7 +86,9 @@ const Profile = ({ route, navigation }) => {
               icon={<Feather name="upload-cloud" size={40} color="black" />}
             />
             <Tile
-            onPress={()=>{RecordedDataBtn()}}
+              onPress={() => {
+                RecordedDataBtn();
+              }}
               icon={
                 <MaterialCommunityIcons name="brain" size={40} color="black" />
               }
