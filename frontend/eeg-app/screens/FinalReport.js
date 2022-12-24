@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { View,Text,StyleSheet,ImageBackground } from "react-native";
 import Background from "../assets/background.jpg";
+import { firebase } from "../configauth";
+
 
 export default function App({navigation,route}){
+  const eegFilesRef = firebase.firestore().collection("eegFiles");
   const [DOB, setDOB] = useState("");
   const [gender, setGender] = useState("");
   const [head, setHead] = useState("");
