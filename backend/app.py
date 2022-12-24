@@ -122,10 +122,10 @@ def getEEG():
 def load_model():
     data = request.get_json()
     print(data)
-    url = data['url']
+    
     name = data['name']
     # name = '00003306_s001_t001.edf'
-    print("url"+url)
+    # print("url"+url)
     print("name"+name)
     # target = 'C:/Users/Fatima/Documents/GitHub/eeg-app/backend/fileuploads/'
     # if not os.path.isdir(target):

@@ -50,11 +50,13 @@ export default function App({navigation,route}){
     const [data, setData] = useState();
     const [visible, setVisible] = useState(false);
     const [loading, setloading] = useState(false);
+    const [filename,setfilename] = useState();
 
     const onAnalyze = async (filename,url) => {
       setloading(true);
+      setfilename(filename);
       try {
-        const response = await fetch("http://192.168.43.137:4000/rawDataModel", {
+        const response = await fetch("http://192.168.133.199:4000/rawDataModel", {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({"filename":filename,"url":url})
@@ -69,7 +71,7 @@ export default function App({navigation,route}){
         setloading(false);
         if (data) {
           // setloading(false);
-          navigation.navigate("SecondReportScreen", { resp_data: data,filename:filename });
+          navigation.navigate("SecondReportScreen", { resp_data:data,filename:filename });
         }
       }
     };
@@ -99,6 +101,7 @@ export default function App({navigation,route}){
     });
   });
   },[data]);
+
     return(
         <View style={Styles.container}>
           <ImageBackground

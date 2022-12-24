@@ -88,8 +88,8 @@ export default ImportData = ({ route, navigation }) => {
     // }
     axios
       // .post(`http://192.168.0.103:4000/uploadFile`, { url, name })
-      .post(`http://192.168.43.137:4000/load`,{ url:selectedurl, name:selectedFileName })
-      .then((res)=>{
+      .post(`http://192.168.133.199:4000/load`,{ url:selectedurl, name:selectedFileName })
+      .then((resp)=>{
         console.log(resp.data.data);
         setData(resp.data.data);
 

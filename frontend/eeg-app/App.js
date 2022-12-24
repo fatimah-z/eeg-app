@@ -91,11 +91,6 @@ function App() {
           options={{ headerStyle: { height: 0 } }}
         />
         <ProfileStack.Screen
-          name="patientData"
-          component={patientData}
-          options={{ headerStyle: { height: 0 } }}
-        />
-        <ProfileStack.Screen
           name="patientHistoryScreen"
           component={PatientHistory}
           options={{ headerStyle: { height: 0 } }}

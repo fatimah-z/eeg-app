@@ -21,7 +21,7 @@ export default function App({navigation,route}){
     // setdata(navigation.getparam('resp_data'))
   })
   const handleonPress= ()=>{
-    navigation.navigate('ViewReport',{data_sent:route.params.resp_data,filename:route.params.filename,pname:route.params.pname});
+    navigation.navigate('ViewReport',{data_sent:route.params.resp_data,filename:route.params.filename,pname:route.params.name});
   }
     return(
         <View style={styles.outterdiv}>

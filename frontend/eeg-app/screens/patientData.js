@@ -30,36 +30,7 @@ const PatientData = ({ route, navigation }) => {
   const [visible, setVisible] = useState(false);
   const [loading, setloading] = useState(false);
   const [filename, setfilename] = useState();
-  const[data,setData] = useState()
-
-  // const handlepress = async(name)=>{
-  //   try {
-  //     setfilename(name);
-  //     setloading(true);
-  //     const response = await fetch("http://192.168.43.137:4000/load", {
-  //       method: "GET"
-  //       // body:{'file': selectedFile,'fileName': selectedFileName},
-  //       // body: selectedFileName,
-  //       // headers: {
-  //       //   'Content-Type': 'multipart/form-data',
-  //       // },
-  //     });
-  //     const resp = await response.json();
-  //     console.log(resp.data);
-  //     setData(resp.data);
-  //     console.log(data);
-  //   } catch (error) {
-  //   } finally {
-
-  //     // if (data) {
-  //     //   setloading(false);
-  //     //   navigation.navigate("ViewAnalysis", {resp_data:data,filename:name,pname:route.params.name});
-  //     //   }
-  //   }
-  //   // setloading(false);
-  //   // navigation.navigate("ViewAnalysis", { resp_data: data,filename:name,pname:route.params.name});
-    
-  // }
+  const[data,setData] = useState();
   
   useEffect(() => {
     setInterval(() => {
@@ -70,7 +41,6 @@ const PatientData = ({ route, navigation }) => {
     navigation.navigate("ViewAnalysis", {resp_data: data,filename:filename,pname:route.params.name});
     // route.params.name
     }
-    eegFilesRef.get().then((result) => {
     async function fetchData() {
       const querySnapshot = await getDocs(q);
       const allFiles = [];
@@ -81,8 +51,9 @@ const PatientData = ({ route, navigation }) => {
       });
       setFiles(allFiles);
     }
-    fetchData();
-  })
+      // setFiles(allFiles);
+      fetchData();
+    
 }, [data]);
   
       // eegFilesRef.get().then((result) => {
@@ -94,11 +65,12 @@ const PatientData = ({ route, navigation }) => {
       // });
   const onSelect = () => {};
 
-  const handleFile = (url, name) => {
+  const handleFile = (name) => {
     setfilename(name)
+    console.log(name);
     axios
       // .post(`http://192.168.0.103:4000/uploadFile`, { url, name })
-      .post(`http://192.168.43.137:4000/load`,{ url:url, name:name })
+      .post(`http://192.168.133.199:4000/load`,{name:name})
       .then((res) => {
         // setDownloading(false);
         // const downloadedFile = new File([res.data], name);
@@ -216,7 +188,7 @@ const PatientData = ({ route, navigation }) => {
                 }}
               >
                 <Pressable
-                  onPress={() => handleFile(item.fileDownloadURL, item.name)}
+                  onPress={() => handleFile(item)}
                 >
                   <Text style={{ color: "grey" }}>Select</Text>
                 </Pressable>
