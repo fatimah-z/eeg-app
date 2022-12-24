@@ -56,7 +56,7 @@ export default function App({navigation,route}){
       setloading(true);
       setfilename(filename);
       try {
-        const response = await fetch("http://192.168.133.199:4000/rawDataModel", {
+        const response = await fetch("http://192.168.43.137:4000/rawDataModel", {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({"filename":filename,"url":url})

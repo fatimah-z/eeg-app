@@ -21,7 +21,12 @@ export default function App({navigation,route}){
     // setdata(navigation.getparam('resp_data'))
   })
   const handleonPress= ()=>{
-    navigation.navigate('ViewReport',{data_sent:route.params.resp_data,filename:route.params.filename,pname:route.params.name});
+    navigation.navigate('ViewReport',{
+      data_sent:route.params.resp_data,
+      filename:route.params.filename,
+      pname:route.params.name,
+      email: route.params.email,
+    });
   }
     return(
         <View style={styles.outterdiv}>

@@ -18,7 +18,12 @@ import {
     const[data,setdata] = useState();
     const{data_}=route.params.data_sent;
     const handleOnPress=()=>{
-      navigation.navigate('finalReport',{data_sent:route.params.data_sent,filename:route.params.filename,pname:route.params.pname});
+      navigation.navigate('finalReport',{
+        data_sent:route.params.data_sent,
+        filename:route.params.filename,
+        pname:route.params.pname,
+        email: route.params.email,
+      });
     }
     useEffect(()=>{
       // setdata(route.params.sent_data)
